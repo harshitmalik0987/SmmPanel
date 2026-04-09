@@ -1,0 +1,2336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>MySocialPanel — #1 SMM Panel India</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+<style>
+/* ════════════════════════════════════════
+   MYSOCIALPANEL — CORE DESIGN SYSTEM
+════════════════════════════════════════ */
+:root{
+  --void:#000000;--deep:#040408;--surface:#0a0a14;--card:#0e0e1a;
+  --card2:#12121f;--border:rgba(120,80,255,.18);--border2:rgba(255,255,255,.07);
+  --glow:#7850ff;--glow2:#00e5ff;--glow3:#ff3cac;--green:#00e676;
+  --yellow:#ffd740;--red:#ff5252;--orange:#ff9100;
+  --text:#e8e0ff;--muted:#6a6880;--bright:#ffffff;
+  --font-h:'Syne',sans-serif;--font-m:'Space Mono',monospace;
+  --radius:12px;--radius-sm:8px;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;overflow-x:hidden;}
+body{background:var(--void);color:var(--text);font-family:var(--font-h);min-height:100vh;overflow-x:hidden;}
+a{text-decoration:none;color:inherit;}
+button,input,select,textarea{font-family:inherit;}
+img{max-width:100%;}
+::-webkit-scrollbar{width:6px;}
+::-webkit-scrollbar-track{background:var(--deep);}
+::-webkit-scrollbar-thumb{background:var(--glow);border-radius:3px;}
+::selection{background:rgba(120,80,255,.35);color:#fff;}
+
+/* ── NOISE OVERLAY ── */
+body::before{
+  content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.04'/%3E%3C/svg%3E");
+  background-size:200px;opacity:.5;
+}
+/* ── VIEWS SYSTEM ── */
+.view{display:none;position:relative;z-index:2;}
+.view.active{display:block;}
+
+/* ════════════════════════════════════════
+   TOP NAVIGATION
+════════════════════════════════════════ */
+#topnav{
+  position:fixed;top:0;left:0;right:0;z-index:900;
+  background:rgba(4,4,8,.8);backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+  padding:0 24px;height:62px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.nav-logo{
+  font-size:1.15rem;font-weight:800;letter-spacing:-.02em;
+  background:linear-gradient(135deg,var(--glow),var(--glow2));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  cursor:pointer;
+}
+.nav-right{display:flex;align-items:center;gap:12px;}
+.nav-balance{
+  font-family:var(--font-m);font-size:.75rem;
+  background:rgba(0,230,118,.08);border:1px solid rgba(0,230,118,.25);
+  color:var(--green);padding:6px 14px;border-radius:100px;
+  display:none;
+}
+.nav-btn{
+  padding:8px 18px;border-radius:6px;font-size:.8rem;font-weight:700;
+  cursor:pointer;border:none;letter-spacing:.03em;transition:.25s;
+}
+.nav-btn-outline{
+  background:transparent;border:1px solid var(--border);color:var(--text);
+}
+.nav-btn-outline:hover{border-color:var(--glow);color:var(--glow);}
+.nav-btn-solid{
+  background:var(--glow);color:#fff;
+  box-shadow:0 0 20px rgba(120,80,255,.35);
+}
+.nav-btn-solid:hover{background:#9070ff;box-shadow:0 0 30px rgba(120,80,255,.5);}
+.nav-user-menu{position:relative;}
+.nav-user-btn{
+  display:flex;align-items:center;gap:8px;
+  background:rgba(255,255,255,.05);border:1px solid var(--border);
+  padding:7px 14px;border-radius:8px;cursor:pointer;
+  font-size:.82rem;transition:.25s;
+}
+.nav-user-btn:hover{border-color:var(--glow);background:rgba(120,80,255,.08);}
+.nav-user-avatar{
+  width:26px;height:26px;border-radius:50%;
+  background:linear-gradient(135deg,var(--glow),var(--glow2));
+  display:flex;align-items:center;justify-content:center;font-size:.75rem;
+}
+.user-dropdown{
+  position:absolute;top:calc(100% + 8px);right:0;width:180px;
+  background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
+  overflow:hidden;display:none;z-index:999;
+  box-shadow:0 20px 50px rgba(0,0,0,.5);
+}
+.user-dropdown.open{display:block;}
+.user-dropdown a{
+  display:flex;align-items:center;gap:10px;
+  padding:12px 16px;font-size:.85rem;color:var(--text);
+  transition:.2s;cursor:pointer;
+}
+.user-dropdown a:hover{background:rgba(255,255,255,.05);color:var(--glow);}
+.user-dropdown .dd-divider{height:1px;background:var(--border);}
+.ham{display:none;background:none;border:none;cursor:pointer;padding:4px;flex-direction:column;gap:5px;}
+.ham span{width:22px;height:2px;background:var(--text);border-radius:2px;display:block;transition:.3s;}
+
+/* ════════════════════════════════════════
+   SIDEBAR (Dashboard Layout)
+════════════════════════════════════════ */
+.dash-layout{
+  display:grid;grid-template-columns:240px 1fr;min-height:100vh;padding-top:62px;
+}
+#sidebar{
+  background:var(--deep);border-right:1px solid var(--border);
+  padding:24px 16px;position:sticky;top:62px;height:calc(100vh - 62px);overflow-y:auto;
+}
+.sidebar-section{margin-bottom:28px;}
+.sidebar-label{
+  font-family:var(--font-m);font-size:.62rem;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--muted);padding:0 8px;margin-bottom:10px;
+}
+.sidebar-link{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 12px;border-radius:var(--radius-sm);
+  font-size:.875rem;font-weight:600;color:var(--muted);
+  cursor:pointer;transition:.2s;margin-bottom:4px;
+}
+.sidebar-link:hover{background:rgba(255,255,255,.05);color:var(--text);}
+.sidebar-link.active{
+  background:rgba(120,80,255,.15);color:var(--glow);
+  border:1px solid rgba(120,80,255,.2);
+}
+.sidebar-link .s-icon{font-size:1.1rem;width:22px;text-align:center;}
+.sidebar-badge{
+  margin-left:auto;background:var(--glow3);color:#fff;
+  font-size:.62rem;padding:2px 7px;border-radius:100px;
+  font-family:var(--font-m);
+}
+
+/* ════════════════════════════════════════
+   MAIN CONTENT AREA
+════════════════════════════════════════ */
+.dash-main{background:var(--void);padding:32px 28px;min-height:calc(100vh - 62px);}
+.page-title{
+  font-size:1.7rem;font-weight:800;letter-spacing:-.03em;margin-bottom:6px;
+}
+.page-sub{font-size:.88rem;color:var(--muted);margin-bottom:28px;}
+
+/* ════════════════════════════════════════
+   CARDS & CONTAINERS
+════════════════════════════════════════ */
+.card{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:var(--radius);padding:24px;
+  transition:border-color .25s,box-shadow .25s;
+}
+.card:hover{border-color:rgba(120,80,255,.3);}
+.card-title{
+  font-size:1rem;font-weight:700;margin-bottom:16px;
+  display:flex;align-items:center;gap:8px;
+}
+
+/* Stat cards */
+.stat-grid{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:28px;
+}
+.stat-card{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:var(--radius);padding:20px;
+  display:flex;align-items:flex-start;gap:16px;
+  transition:.25s;
+}
+.stat-card:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(0,0,0,.4);}
+.stat-icon{
+  width:46px;height:46px;border-radius:var(--radius-sm);
+  display:flex;align-items:center;justify-content:center;font-size:1.3rem;
+  flex-shrink:0;
+}
+.si-purple{background:rgba(120,80,255,.15);}
+.si-cyan{background:rgba(0,229,255,.1);}
+.si-green{background:rgba(0,230,118,.1);}
+.si-pink{background:rgba(255,60,172,.1);}
+.si-yellow{background:rgba(255,215,64,.1);}
+.stat-info{}
+.stat-val{font-size:1.5rem;font-weight:800;line-height:1;letter-spacing:-.02em;}
+.stat-lbl{font-size:.75rem;color:var(--muted);margin-top:4px;font-family:var(--font-m);}
+
+/* ════════════════════════════════════════
+   FORM ELEMENTS
+════════════════════════════════════════ */
+.form-group{margin-bottom:18px;}
+.form-label{
+  display:block;font-size:.8rem;font-weight:700;letter-spacing:.06em;
+  text-transform:uppercase;color:var(--muted);margin-bottom:8px;
+  font-family:var(--font-m);
+}
+.form-input,.form-select,.form-textarea{
+  width:100%;background:rgba(255,255,255,.04);
+  border:1px solid var(--border2);border-radius:var(--radius-sm);
+  color:var(--text);padding:12px 16px;font-size:.92rem;
+  transition:border-color .25s,box-shadow .25s;
+  -webkit-appearance:none;appearance:none;
+}
+.form-input:focus,.form-select:focus,.form-textarea:focus{
+  outline:none;border-color:var(--glow);
+  box-shadow:0 0 0 3px rgba(120,80,255,.15);
+}
+.form-input::placeholder{color:var(--muted);}
+.form-select{
+  background:rgba(255,255,255,.04);cursor:pointer;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236a6880' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 14px center;
+  padding-right:36px;
+}
+.form-select option{background:var(--card);color:var(--text);}
+.form-hint{font-size:.75rem;color:var(--muted);margin-top:6px;font-family:var(--font-m);}
+
+/* Buttons */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  padding:12px 24px;border-radius:var(--radius-sm);font-size:.88rem;
+  font-weight:700;border:none;cursor:pointer;transition:.25s;letter-spacing:.02em;
+  font-family:var(--font-h);
+}
+.btn-full{width:100%;}
+.btn-primary{
+  background:var(--glow);color:#fff;
+  box-shadow:0 0 24px rgba(120,80,255,.35);
+}
+.btn-primary:hover{background:#9070ff;box-shadow:0 0 40px rgba(120,80,255,.55);transform:translateY(-1px);}
+.btn-secondary{
+  background:rgba(255,255,255,.06);color:var(--text);
+  border:1px solid var(--border);
+}
+.btn-secondary:hover{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.2);}
+.btn-success{background:rgba(0,230,118,.15);color:var(--green);border:1px solid rgba(0,230,118,.3);}
+.btn-success:hover{background:rgba(0,230,118,.25);}
+.btn-danger{background:rgba(255,82,82,.15);color:var(--red);border:1px solid rgba(255,82,82,.3);}
+.btn-danger:hover{background:rgba(255,82,82,.25);}
+.btn-warn{background:rgba(255,145,0,.15);color:var(--orange);border:1px solid rgba(255,145,0,.3);}
+.btn-sm{padding:7px 14px;font-size:.78rem;}
+.btn-xs{padding:5px 10px;font-size:.72rem;}
+
+/* ════════════════════════════════════════
+   BADGES / STATUS
+════════════════════════════════════════ */
+.badge{
+  display:inline-flex;align-items:center;gap:5px;
+  padding:4px 10px;border-radius:100px;
+  font-size:.7rem;font-weight:700;font-family:var(--font-m);letter-spacing:.06em;
+}
+.badge-pending{background:rgba(255,215,64,.12);color:var(--yellow);border:1px solid rgba(255,215,64,.25);}
+.badge-processing{background:rgba(0,229,255,.1);color:var(--glow2);border:1px solid rgba(0,229,255,.2);}
+.badge-completed{background:rgba(0,230,118,.1);color:var(--green);border:1px solid rgba(0,230,118,.2);}
+.badge-cancelled{background:rgba(255,82,82,.1);color:var(--red);border:1px solid rgba(255,82,82,.2);}
+.badge-active{background:rgba(0,230,118,.1);color:var(--green);border:1px solid rgba(0,230,118,.2);}
+.badge-inactive{background:rgba(106,104,128,.1);color:var(--muted);border:1px solid rgba(106,104,128,.2);}
+
+/* ════════════════════════════════════════
+   TABLES
+════════════════════════════════════════ */
+.table-wrap{overflow-x:auto;border-radius:var(--radius);border:1px solid var(--border);}
+table{width:100%;border-collapse:collapse;}
+table th{
+  background:rgba(255,255,255,.03);padding:14px 16px;text-align:left;
+  font-size:.73rem;font-family:var(--font-m);letter-spacing:.1em;
+  text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--border);
+  white-space:nowrap;
+}
+table td{
+  padding:14px 16px;font-size:.85rem;border-bottom:1px solid rgba(255,255,255,.04);
+  vertical-align:middle;
+}
+table tr:last-child td{border-bottom:none;}
+table tr:hover td{background:rgba(255,255,255,.02);}
+.td-mono{font-family:var(--font-m);font-size:.8rem;}
+
+/* ════════════════════════════════════════
+   LANDING PAGE STYLES
+════════════════════════════════════════ */
+#land-hero{
+  min-height:100vh;display:flex;align-items:center;justify-content:center;
+  text-align:center;padding:80px 24px 60px;position:relative;overflow:hidden;
+}
+.land-orb{
+  position:absolute;border-radius:50%;filter:blur(90px);pointer-events:none;
+}
+.lo1{width:500px;height:500px;background:radial-gradient(circle,rgba(120,80,255,.2),transparent 70%);top:-80px;left:-100px;animation:floatA 9s ease-in-out infinite;}
+.lo2{width:380px;height:380px;background:radial-gradient(circle,rgba(0,229,255,.13),transparent 70%);bottom:-60px;right:-80px;animation:floatB 11s ease-in-out infinite;}
+.lo3{width:280px;height:280px;background:radial-gradient(circle,rgba(255,60,172,.1),transparent 70%);top:50%;left:50%;transform:translate(-50%,-50%);animation:floatC 14s ease-in-out infinite;}
+@keyframes floatA{0%,100%{transform:translate(0,0)}50%{transform:translate(40px,50px)}}
+@keyframes floatB{0%,100%{transform:translate(0,0)}50%{transform:translate(-30px,-40px)}}
+@keyframes floatC{0%,100%{transform:translate(-50%,-50%)}50%{transform:translate(-52%,-53%)}}
+.hero-badge{
+  display:inline-flex;align-items:center;gap:8px;
+  background:rgba(120,80,255,.1);border:1px solid rgba(120,80,255,.3);
+  padding:7px 18px;border-radius:100px;
+  font-family:var(--font-m);font-size:.7rem;letter-spacing:.14em;
+  color:var(--glow2);text-transform:uppercase;margin-bottom:24px;
+  animation:fadeUp .8s ease both;
+}
+.badge-dot{width:7px;height:7px;border-radius:50%;background:var(--green);animation:blink 1.5s ease infinite;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.hero-h1{
+  font-size:clamp(2.8rem,10vw,6.5rem);font-weight:800;line-height:.92;
+  letter-spacing:-.04em;margin-bottom:16px;
+  animation:fadeUp .9s .1s ease both;
+}
+.grad-text{
+  background:linear-gradient(135deg,#fff 0%,var(--glow) 35%,var(--glow2) 65%,var(--glow3) 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  background-size:200%;animation:shimmer 4s linear infinite;
+}
+@keyframes shimmer{0%{background-position:0%}100%{background-position:200%}}
+.hero-sub{
+  font-size:clamp(.95rem,2.5vw,1.25rem);color:var(--muted);max-width:600px;
+  margin:0 auto 36px;line-height:1.75;
+  animation:fadeUp 1s .2s ease both;
+}
+.hero-btns{
+  display:flex;gap:14px;flex-wrap:wrap;justify-content:center;
+  animation:fadeUp 1s .3s ease both;
+}
+.hero-trust{
+  margin-top:48px;display:flex;align-items:center;justify-content:center;gap:24px;flex-wrap:wrap;
+  animation:fadeUp 1s .4s ease both;
+}
+.trust-item{
+  display:flex;align-items:center;gap:8px;
+  font-size:.82rem;color:var(--muted);font-family:var(--font-m);
+}
+.trust-item span:first-child{color:var(--green);}
+/* Features strip */
+.features-strip{
+  background:var(--deep);border-top:1px solid var(--border);border-bottom:1px solid var(--border);
+  padding:60px 24px;
+}
+.features-grid{
+  max-width:1100px;margin:0 auto;
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px;
+}
+.feat-card{
+  background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
+  padding:28px;transition:.3s;
+}
+.feat-card:hover{border-color:rgba(120,80,255,.4);transform:translateY(-4px);box-shadow:0 20px 50px rgba(0,0,0,.4);}
+.feat-icon{font-size:2rem;margin-bottom:14px;}
+.feat-title{font-size:1.05rem;font-weight:700;margin-bottom:8px;letter-spacing:-.01em;}
+.feat-desc{font-size:.85rem;color:var(--muted);line-height:1.7;}
+/* Pricing */
+.pricing-section{padding:80px 24px;max-width:1100px;margin:0 auto;}
+.section-head{text-align:center;margin-bottom:52px;}
+.section-tag{
+  display:inline-flex;align-items:center;gap:8px;
+  font-family:var(--font-m);font-size:.68rem;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--glow);margin-bottom:12px;
+}
+.section-tag::before,.section-tag::after{content:'';width:20px;height:1px;background:var(--glow);}
+.section-h2{font-size:clamp(1.8rem,5vw,3rem);font-weight:800;letter-spacing:-.03em;margin-bottom:12px;}
+.section-p{color:var(--muted);font-size:.95rem;line-height:1.7;}
+/* Services preview table */
+.services-preview{
+  background:var(--deep);padding:80px 24px;
+}
+.services-inner{max-width:1100px;margin:0 auto;}
+/* Footer */
+#land-footer{
+  background:var(--deep);border-top:1px solid var(--border);
+  padding:40px 24px;text-align:center;
+}
+.footer-logo{
+  font-size:1.2rem;font-weight:800;
+  background:linear-gradient(135deg,var(--glow),var(--glow2));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  margin-bottom:12px;
+}
+#land-footer p{font-family:var(--font-m);font-size:.72rem;color:var(--muted);}
+#land-footer a{color:var(--glow);}
+
+/* ════════════════════════════════════════
+   AUTH PAGES (Login / Signup)
+════════════════════════════════════════ */
+.auth-wrap{
+  min-height:100vh;display:flex;align-items:center;justify-content:center;
+  padding:80px 24px 40px;position:relative;overflow:hidden;
+}
+.auth-box{
+  width:100%;max-width:420px;
+  background:var(--card);border:1px solid var(--border);
+  border-radius:20px;padding:40px;position:relative;
+  animation:fadeUp .7s ease both;
+}
+.auth-box::before{
+  content:'';position:absolute;inset:0;border-radius:20px;
+  background:radial-gradient(ellipse at 50% 0%,rgba(120,80,255,.1),transparent 65%);
+  pointer-events:none;
+}
+.auth-logo{
+  text-align:center;font-size:1.3rem;font-weight:800;
+  background:linear-gradient(135deg,var(--glow),var(--glow2));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  margin-bottom:6px;
+}
+.auth-tagline{text-align:center;font-size:.82rem;color:var(--muted);margin-bottom:28px;font-family:var(--font-m);}
+.auth-title{font-size:1.4rem;font-weight:800;text-align:center;margin-bottom:4px;letter-spacing:-.02em;}
+.auth-sub{font-size:.82rem;color:var(--muted);text-align:center;margin-bottom:24px;}
+.auth-switch{text-align:center;margin-top:20px;font-size:.85rem;color:var(--muted);}
+.auth-switch a{color:var(--glow);cursor:pointer;}
+.auth-err{
+  background:rgba(255,82,82,.1);border:1px solid rgba(255,82,82,.25);
+  color:var(--red);border-radius:var(--radius-sm);padding:10px 14px;
+  font-size:.82rem;margin-bottom:16px;display:none;font-family:var(--font-m);
+}
+
+/* ════════════════════════════════════════
+   ORDER FORM
+════════════════════════════════════════ */
+.order-preview{
+  background:rgba(120,80,255,.06);border:1px solid rgba(120,80,255,.2);
+  border-radius:var(--radius);padding:16px;margin-top:12px;
+}
+.order-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.05);}
+.order-row:last-child{border-bottom:none;}
+.order-key{font-size:.8rem;color:var(--muted);font-family:var(--font-m);}
+.order-val{font-size:.85rem;font-weight:700;}
+.total-row .order-val{color:var(--glow2);font-size:1.1rem;}
+
+/* ════════════════════════════════════════
+   DEPOSIT PAGE
+════════════════════════════════════════ */
+.deposit-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+.payment-method-card{
+  background:var(--card);border:2px solid var(--border);border-radius:var(--radius);
+  padding:24px;cursor:pointer;transition:.25s;text-align:center;
+}
+.payment-method-card:hover,.payment-method-card.selected{
+  border-color:var(--glow);background:rgba(120,80,255,.08);
+}
+.pm-icon{font-size:2.5rem;margin-bottom:10px;}
+.pm-name{font-size:.95rem;font-weight:700;margin-bottom:4px;}
+.pm-desc{font-size:.78rem;color:var(--muted);font-family:var(--font-m);}
+.payment-details-box{
+  background:rgba(0,230,118,.04);border:1px solid rgba(0,230,118,.2);
+  border-radius:var(--radius);padding:20px;margin-top:16px;
+}
+.pd-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid rgba(0,230,118,.1);}
+.pd-row:last-child{border-bottom:none;}
+.pd-key{font-size:.78rem;color:var(--muted);font-family:var(--font-m);}
+.pd-val{font-size:.85rem;font-weight:700;color:var(--green);}
+.copy-btn{
+  background:rgba(0,230,118,.1);border:1px solid rgba(0,230,118,.2);
+  color:var(--green);padding:4px 10px;border-radius:4px;font-size:.7rem;
+  cursor:pointer;font-family:var(--font-m);transition:.2s;
+}
+.copy-btn:hover{background:rgba(0,230,118,.22);}
+
+/* ════════════════════════════════════════
+   ADMIN PANEL STYLES
+════════════════════════════════════════ */
+.admin-badge{
+  background:rgba(255,60,172,.1);border:1px solid rgba(255,60,172,.3);
+  color:var(--glow3);padding:3px 10px;border-radius:4px;
+  font-size:.65rem;font-family:var(--font-m);letter-spacing:.1em;margin-left:8px;
+}
+.api-provider-card{
+  background:var(--card2);border:1px solid var(--border);border-radius:var(--radius);
+  padding:20px;margin-bottom:12px;
+}
+.service-import-item{
+  display:flex;align-items:center;gap:12px;
+  padding:12px 16px;border:1px solid var(--border);border-radius:var(--radius-sm);
+  margin-bottom:8px;background:rgba(255,255,255,.02);
+  transition:.2s;flex-wrap:wrap;
+}
+.service-import-item:hover{border-color:rgba(120,80,255,.3);}
+.sii-id{font-family:var(--font-m);font-size:.72rem;color:var(--muted);width:52px;}
+.sii-name{flex:1;font-size:.85rem;font-weight:600;min-width:140px;}
+.sii-rate{font-family:var(--font-m);font-size:.78rem;color:var(--glow2);}
+.sii-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-left:auto;}
+.price-input-row{display:flex;gap:8px;align-items:center;}
+.price-type-sel{
+  background:rgba(255,255,255,.04);border:1px solid var(--border);
+  color:var(--text);border-radius:4px;padding:5px 8px;font-size:.75rem;
+  cursor:pointer;
+}
+.price-val-in{
+  background:rgba(255,255,255,.04);border:1px solid var(--border);
+  color:var(--text);border-radius:4px;padding:5px 10px;font-size:.75rem;
+  width:80px;text-align:right;
+}
+.price-val-in:focus,.price-type-sel:focus{outline:none;border-color:var(--glow);}
+.admin-tab-btn{
+  background:transparent;border:1px solid var(--border);
+  color:var(--muted);padding:9px 18px;border-radius:var(--radius-sm);
+  cursor:pointer;font-size:.82rem;font-weight:600;font-family:var(--font-h);
+  transition:.25s;
+}
+.admin-tab-btn.active,.admin-tab-btn:hover{
+  background:rgba(120,80,255,.1);border-color:var(--glow);color:var(--glow);
+}
+.admin-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:24px;}
+.admin-tab-panel{display:none;}
+.admin-tab-panel.active{display:block;}
+.fetched-services-wrap{
+  max-height:450px;overflow-y:auto;padding-right:4px;
+}
+.fetched-services-wrap::-webkit-scrollbar{width:4px;}
+.fetched-services-wrap::-webkit-scrollbar-thumb{background:var(--glow);border-radius:2px;}
+.manage-service-row{
+  display:grid;grid-template-columns:50px 1fr 100px 80px 80px 80px auto;
+  gap:10px;align-items:center;
+  padding:12px 14px;border:1px solid var(--border);border-radius:var(--radius-sm);
+  margin-bottom:8px;background:rgba(255,255,255,.02);
+  font-size:.82rem;
+}
+.toggle-switch{
+  position:relative;width:40px;height:22px;cursor:pointer;
+}
+.toggle-switch input{opacity:0;width:0;height:0;}
+.toggle-slider{
+  position:absolute;inset:0;background:rgba(255,255,255,.1);
+  border-radius:100px;transition:.3s;
+}
+.toggle-slider::before{
+  content:'';position:absolute;width:16px;height:16px;
+  left:3px;bottom:3px;background:#fff;border-radius:50%;transition:.3s;
+}
+.toggle-switch input:checked+.toggle-slider{background:var(--green);}
+.toggle-switch input:checked+.toggle-slider::before{transform:translateX(18px);}
+.inline-edit{
+  background:rgba(255,255,255,.05);border:1px solid var(--border);
+  color:var(--text);border-radius:4px;padding:4px 8px;font-size:.82rem;
+  width:100%;
+}
+.inline-edit:focus{outline:none;border-color:var(--glow);}
+/* toast */
+#toast{
+  position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(100px);
+  background:rgba(14,14,26,.95);border:1px solid var(--border);
+  border-radius:var(--radius-sm);padding:12px 24px;
+  font-size:.85rem;font-family:var(--font-m);color:var(--text);
+  z-index:9999;transition:transform .3s,opacity .3s;opacity:0;
+  display:flex;align-items:center;gap:10px;
+  box-shadow:0 20px 50px rgba(0,0,0,.5);
+}
+#toast.show{transform:translateX(-50%) translateY(0);opacity:1;}
+#toast.success{border-color:rgba(0,230,118,.4);color:var(--green);}
+#toast.error{border-color:rgba(255,82,82,.4);color:var(--red);}
+
+/* Modal */
+.modal-overlay{
+  position:fixed;inset:0;z-index:8000;
+  background:rgba(0,0,0,.75);backdrop-filter:blur(8px);
+  display:none;align-items:center;justify-content:center;padding:24px;
+}
+.modal-overlay.open{display:flex;}
+.modal-box{
+  background:var(--card);border:1px solid var(--border);border-radius:20px;
+  padding:32px;width:100%;max-width:480px;
+  animation:fadeUp .4s ease both;position:relative;
+}
+.modal-close{
+  position:absolute;top:16px;right:16px;background:rgba(255,255,255,.06);
+  border:1px solid var(--border);border-radius:6px;color:var(--muted);
+  padding:4px 10px;cursor:pointer;font-size:.85rem;
+}
+.modal-close:hover{color:var(--text);}
+.modal-title{font-size:1.2rem;font-weight:800;margin-bottom:20px;letter-spacing:-.02em;}
+
+/* animations */
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
+@keyframes spin{to{transform:rotate(360deg)}}
+.spinner{
+  width:18px;height:18px;border:2px solid rgba(255,255,255,.2);
+  border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;
+  display:inline-block;
+}
+
+/* ════════════════════════════════════════
+   RESPONSIVE MOBILE
+════════════════════════════════════════ */
+@media(max-width:900px){
+  .dash-layout{grid-template-columns:1fr;}
+  #sidebar{
+    position:fixed;left:-260px;top:62px;bottom:0;z-index:800;
+    transition:left .3s;width:240px;height:calc(100vh - 62px);
+  }
+  #sidebar.open{left:0;}
+  .ham{display:flex;}
+  .manage-service-row{
+    grid-template-columns:40px 1fr auto;
+    grid-template-rows:auto auto;
+  }
+}
+@media(max-width:600px){
+  .deposit-grid{grid-template-columns:1fr;}
+  .stat-grid{grid-template-columns:1fr 1fr;}
+  .dash-main{padding:20px 16px;}
+  .auth-box{padding:28px 20px;}
+}
+</style>
+</head>
+<body>
+
+<!-- ════ TOAST ════ -->
+<div id="toast">📢 Message here</div>
+
+<!-- ════ MODAL ════ -->
+<div class="modal-overlay" id="globalModal">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal()">✕ Close</button>
+    <div id="modalContent"></div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     TOP NAVIGATION
+════════════════════════════════════════ -->
+<nav id="topnav">
+  <div class="nav-logo" onclick="goHome()">💎 MySocialPanel</div>
+  <div class="nav-right">
+    <div class="nav-balance" id="navBalance">💰 ₹0.00</div>
+    <!-- Guest buttons -->
+    <div id="guestBtns">
+      <button class="nav-btn nav-btn-outline" onclick="showView('login')" style="margin-right:8px">Login</button>
+      <button class="nav-btn nav-btn-solid" onclick="showView('signup')">Sign Up Free 🚀</button>
+    </div>
+    <!-- User menu -->
+    <div class="nav-user-menu" id="userMenuWrap" style="display:none">
+      <div class="nav-user-btn" onclick="toggleDropdown()">
+        <div class="nav-user-avatar" id="navAvatar">U</div>
+        <span id="navUsername">User</span> ▾
+      </div>
+      <div class="user-dropdown" id="userDropdown">
+        <a onclick="showDash('overview')">🏠 Dashboard</a>
+        <a onclick="showDash('neworder')">➕ New Order</a>
+        <a onclick="showDash('orders')">📋 My Orders</a>
+        <a onclick="showDash('deposit')">💳 Add Funds</a>
+        <div class="dd-divider"></div>
+        <a onclick="logout()" style="color:var(--red)">🚪 Logout</a>
+      </div>
+    </div>
+    <button class="ham" id="hamBtn" onclick="toggleSidebar()">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- ════════════════════════════════════════
+     VIEW: LANDING PAGE
+════════════════════════════════════════ -->
+<div id="view-landing" class="view">
+  <!-- Hero -->
+  <section id="land-hero">
+    <div class="land-orb lo1"></div>
+    <div class="land-orb lo2"></div>
+    <div class="land-orb lo3"></div>
+    <div style="position:relative;z-index:2;max-width:750px;">
+      <div class="hero-badge"><span class="badge-dot"></span> India's #1 SMM Panel — MySocialPanel.in</div>
+      <h1 class="hero-h1"><span class="grad-text">Grow Social</span><br/>Media Fast 🚀</h1>
+      <p class="hero-sub">
+        Get real-looking followers, likes, views & more for Instagram, YouTube, Telegram, TikTok &amp; 20+ platforms. 
+        Cheapest prices ⚡ Instant delivery 💨 100% Safe 🛡️
+      </p>
+      <div class="hero-btns">
+        <button class="btn btn-primary" onclick="showView('signup')">🚀 Start Now — Free</button>
+        <button class="btn btn-secondary" onclick="scrollToServices()">📋 View Services</button>
+      </div>
+      <div class="hero-trust">
+        <div class="trust-item"><span>✅</span> 50,000+ Happy Users</div>
+        <div class="trust-item"><span>⚡</span> Instant Start</div>
+        <div class="trust-item"><span>💰</span> Lowest Prices</div>
+        <div class="trust-item"><span>🔒</span> 100% Secure</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section class="features-strip">
+    <div class="features-grid">
+      <div class="feat-card">
+        <div class="feat-icon">⚡</div>
+        <div class="feat-title">Instant Delivery</div>
+        <div class="feat-desc">Orders start processing within seconds. No waiting, no delay — your growth begins immediately after payment confirmed.</div>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">💰</div>
+        <div class="feat-title">Cheapest Prices</div>
+        <div class="feat-desc">We partner with top providers to give you the lowest market prices. Resellers welcome — huge margins available.</div>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">🛡️</div>
+        <div class="feat-title">100% Safe</div>
+        <div class="feat-desc">All services use safe methods. Your accounts are never at risk. We follow platform guidelines carefully.</div>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">🌐</div>
+        <div class="feat-title">20+ Platforms</div>
+        <div class="feat-desc">Instagram, YouTube, Telegram, TikTok, Facebook, Twitter/X, Snapchat, LinkedIn and many more platforms supported.</div>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">📱</div>
+        <div class="feat-title">Easy to Use</div>
+        <div class="feat-desc">Simple dashboard designed for everyone. Mobile friendly, no technical knowledge needed. Order in 3 clicks.</div>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">🔄</div>
+        <div class="feat-title">Auto Refill</div>
+        <div class="feat-desc">Many services include refill guarantee. If your count drops, we refill it automatically — no questions asked.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Services Preview -->
+  <section class="services-preview" id="servicesSection">
+    <div class="services-inner">
+      <div class="section-head">
+        <div class="section-tag">What We Offer</div>
+        <h2 class="section-h2">Our Top Services 🔥</h2>
+        <p class="section-p">Hundreds of services. All categories. Unbeatable prices.</p>
+      </div>
+
+      <!-- Platform tabs -->
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:24px;" id="platformTabs"></div>
+
+      <div class="table-wrap" id="landServicesTable">
+        <table>
+          <thead><tr><th>#</th><th>Service Name</th><th>Rate per 1000</th><th>Min Order</th><th>Max Order</th><th></th></tr></thead>
+          <tbody id="landServicesTbody"></tbody>
+        </table>
+      </div>
+
+      <div style="text-align:center;margin-top:28px;">
+        <button class="btn btn-primary" onclick="showView('signup')">📋 See All Services — Sign Up Free</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- How it works -->
+  <section style="padding:80px 24px;max-width:900px;margin:0 auto;">
+    <div class="section-head">
+      <div class="section-tag">Simple Steps</div>
+      <h2 class="section-h2">How It Works 🤔</h2>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:20px;">
+      <div style="text-align:center;padding:28px 20px;">
+        <div style="font-size:2.5rem;margin-bottom:12px;">1️⃣</div>
+        <div style="font-size:1rem;font-weight:700;margin-bottom:8px;">Create Account</div>
+        <div style="font-size:.85rem;color:var(--muted);line-height:1.6">Sign up free in 30 seconds. No verification needed, just username + password.</div>
+      </div>
+      <div style="text-align:center;padding:28px 20px;">
+        <div style="font-size:2.5rem;margin-bottom:12px;">2️⃣</div>
+        <div style="font-size:1rem;font-weight:700;margin-bottom:8px;">Add Funds</div>
+        <div style="font-size:.85rem;color:var(--muted);line-height:1.6">Deposit money via UPI, bank transfer. Manual payment — fast approval by admin.</div>
+      </div>
+      <div style="text-align:center;padding:28px 20px;">
+        <div style="font-size:2.5rem;margin-bottom:12px;">3️⃣</div>
+        <div style="font-size:1rem;font-weight:700;margin-bottom:8px;">Place Order</div>
+        <div style="font-size:.85rem;color:var(--muted);line-height:1.6">Pick a service, enter your link, choose quantity and place order. Done!</div>
+      </div>
+      <div style="text-align:center;padding:28px 20px;">
+        <div style="font-size:2.5rem;margin-bottom:12px;">4️⃣</div>
+        <div style="font-size:1rem;font-weight:700;margin-bottom:8px;">Watch Growth</div>
+        <div style="font-size:.85rem;color:var(--muted);line-height:1.6">Sit back and watch your numbers grow. Real-time order tracking in dashboard.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Banner -->
+  <section style="padding:0 24px 80px;">
+    <div style="max-width:800px;margin:0 auto;background:linear-gradient(135deg,rgba(120,80,255,.15),rgba(0,229,255,.08));border:1px solid rgba(120,80,255,.3);border-radius:20px;padding:52px 40px;text-align:center;">
+      <div style="font-size:2rem;margin-bottom:12px;">🚀</div>
+      <h2 style="font-size:2rem;font-weight:800;letter-spacing:-.03em;margin-bottom:12px;">Ready to Grow? Start Free!</h2>
+      <p style="color:var(--muted);margin-bottom:28px;">Join thousands of creators & marketers already using MySocialPanel</p>
+      <button class="btn btn-primary" onclick="showView('signup')">Create Free Account →</button>
+    </div>
+  </section>
+
+  <footer id="land-footer">
+    <div class="footer-logo">💎 MySocialPanel</div>
+    <p>MySocialPanel.in &nbsp;|&nbsp; Best SMM Panel India &nbsp;|&nbsp; © 2025 All Rights Reserved</p>
+    <p style="margin-top:8px;">Built with ❤️ for Indian Creators &amp; Marketers</p>
+  </footer>
+</div>
+
+<!-- ════════════════════════════════════════
+     VIEW: LOGIN
+════════════════════════════════════════ -->
+<div id="view-login" class="view">
+  <div class="auth-wrap">
+    <div class="land-orb lo1" style="opacity:.4"></div>
+    <div class="land-orb lo2" style="opacity:.4"></div>
+    <div class="auth-box">
+      <div class="auth-logo">💎 MySocialPanel</div>
+      <div class="auth-tagline">MySocialPanel.in</div>
+      <h2 class="auth-title">Welcome Back! 👋</h2>
+      <p class="auth-sub">Login to your account and keep growing</p>
+      <div class="auth-err" id="loginErr"></div>
+      <div class="form-group">
+        <label class="form-label">Username or Email</label>
+        <input type="text" class="form-input" id="loginUser" placeholder="Enter username or email"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Password 🔒</label>
+        <input type="password" class="form-input" id="loginPass" placeholder="Your password"/>
+      </div>
+      <button class="btn btn-primary btn-full" onclick="doLogin()">🔓 Login to Panel</button>
+      <div class="auth-switch">
+        Don't have account? <a onclick="showView('signup')">Sign Up Free 🚀</a>
+      </div>
+      <div style="text-align:center;margin-top:12px;">
+        <a onclick="showView('admin-login')" style="font-size:.75rem;color:var(--muted);cursor:pointer;font-family:var(--font-m)">🔐 Admin Panel</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     VIEW: SIGNUP
+════════════════════════════════════════ -->
+<div id="view-signup" class="view">
+  <div class="auth-wrap">
+    <div class="land-orb lo1" style="opacity:.4"></div>
+    <div class="land-orb lo2" style="opacity:.4"></div>
+    <div class="auth-box">
+      <div class="auth-logo">💎 MySocialPanel</div>
+      <div class="auth-tagline">Create your free account</div>
+      <h2 class="auth-title">Join Now! 🚀</h2>
+      <p class="auth-sub">Free account. No credit card. Instant access.</p>
+      <div class="auth-err" id="signupErr"></div>
+      <div class="form-group">
+        <label class="form-label">Username</label>
+        <input type="text" class="form-input" id="signupUsername" placeholder="Choose a username"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Email Address</label>
+        <input type="email" class="form-input" id="signupEmail" placeholder="your@email.com"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Password 🔒</label>
+        <input type="password" class="form-input" id="signupPass" placeholder="Min 6 characters"/>
+      </div>
+      <button class="btn btn-primary btn-full" onclick="doSignup()">🎉 Create Free Account</button>
+      <div class="auth-switch">
+        Already have account? <a onclick="showView('login')">Login Here</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     VIEW: USER DASHBOARD
+════════════════════════════════════════ -->
+<div id="view-dashboard" class="view">
+  <div class="dash-layout">
+    <!-- Sidebar -->
+    <aside id="sidebar">
+      <div class="sidebar-section">
+        <div class="sidebar-label">Main Menu</div>
+        <div class="sidebar-link active" onclick="showDash('overview')" data-dash="overview">
+          <span class="s-icon">🏠</span> Dashboard
+        </div>
+        <div class="sidebar-link" onclick="showDash('neworder')" data-dash="neworder">
+          <span class="s-icon">➕</span> New Order
+        </div>
+        <div class="sidebar-link" onclick="showDash('orders')" data-dash="orders">
+          <span class="s-icon">📋</span> My Orders
+          <span class="sidebar-badge" id="pendingBadge" style="display:none">!</span>
+        </div>
+        <div class="sidebar-link" onclick="showDash('services-list')" data-dash="services-list">
+          <span class="s-icon">🛒</span> Services
+        </div>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-label">Billing</div>
+        <div class="sidebar-link" onclick="showDash('deposit')" data-dash="deposit">
+          <span class="s-icon">💳</span> Add Funds
+        </div>
+        <div class="sidebar-link" onclick="showDash('transactions')" data-dash="transactions">
+          <span class="s-icon">📊</span> Transactions
+        </div>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-label">Account</div>
+        <div class="sidebar-link" onclick="logout()">
+          <span class="s-icon">🚪</span> Logout
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="dash-main">
+      <!-- Overview Page -->
+      <div id="dash-overview" class="dash-page">
+        <h1 class="page-title" id="dashGreeting">Hello! 👋</h1>
+        <p class="page-sub">Welcome to your MySocialPanel dashboard. Let's grow together! 🚀</p>
+        <div class="stat-grid" id="overviewStats"></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+          <div class="card">
+            <div class="card-title">⚡ Quick Order</div>
+            <p style="font-size:.85rem;color:var(--muted);margin-bottom:16px">Jump right in and place a new order for any social media platform.</p>
+            <button class="btn btn-primary" onclick="showDash('neworder')">➕ Place New Order</button>
+          </div>
+          <div class="card">
+            <div class="card-title">💳 Add Funds</div>
+            <p style="font-size:.85rem;color:var(--muted);margin-bottom:16px">Deposit money to your account using UPI, bank transfer and more.</p>
+            <button class="btn btn-secondary" onclick="showDash('deposit')">💰 Deposit Now</button>
+          </div>
+        </div>
+        <div class="card" style="margin-top:20px;">
+          <div class="card-title">📋 Recent Orders</div>
+          <div id="recentOrdersTable"></div>
+        </div>
+      </div>
+
+      <!-- New Order Page -->
+      <div id="dash-neworder" class="dash-page" style="display:none">
+        <h1 class="page-title">New Order ➕</h1>
+        <p class="page-sub">Choose a service and place your order below.</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start;">
+          <div class="card">
+            <div class="form-group">
+              <label class="form-label">📱 Select Category</label>
+              <select class="form-select" id="orderCategory" onchange="filterOrderServices()"></select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">🎯 Select Service</label>
+              <select class="form-select" id="orderService" onchange="updateOrderPreview()"></select>
+            </div>
+            <div id="serviceDescBox" style="display:none;background:rgba(0,229,255,.05);border:1px solid rgba(0,229,255,.15);border-radius:var(--radius-sm);padding:12px;margin-bottom:16px;font-size:.82rem;color:var(--muted);"></div>
+            <div class="form-group">
+              <label class="form-label">🔗 Your Link / Username</label>
+              <input type="text" class="form-input" id="orderLink" placeholder="https://instagram.com/yourprofile" oninput="updateOrderPreview()"/>
+              <div class="form-hint">⚠️ Make sure your profile/post is public!</div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">🔢 Quantity</label>
+              <input type="number" class="form-input" id="orderQty" placeholder="Enter amount" min="1" oninput="updateOrderPreview()"/>
+              <div class="form-hint" id="qtyHint"></div>
+            </div>
+            <button class="btn btn-primary btn-full" onclick="placeOrder()" id="placeOrderBtn">🚀 Place Order</button>
+          </div>
+          <div>
+            <div class="card" id="orderPreviewBox">
+              <div class="card-title">📝 Order Summary</div>
+              <div id="orderPreviewContent">
+                <p style="color:var(--muted);font-size:.85rem;text-align:center;padding:20px 0">👆 Select a service to see price preview</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- My Orders -->
+      <div id="dash-orders" class="dash-page" style="display:none">
+        <h1 class="page-title">My Orders 📋</h1>
+        <p class="page-sub">Track all your orders and their current status.</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Order ID</th><th>Service</th><th>Link</th><th>Qty</th><th>Amount</th><th>Status</th><th>Date</th></tr></thead>
+            <tbody id="myOrdersTbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Services List -->
+      <div id="dash-services-list" class="dash-page" style="display:none">
+        <h1 class="page-title">All Services 🛒</h1>
+        <p class="page-sub">Browse all available services with prices.</p>
+        <div class="form-group" style="max-width:360px">
+          <input type="text" class="form-input" placeholder="🔍 Search services..." oninput="searchServices(this.value)"/>
+        </div>
+        <div class="table-wrap" id="allServicesTable">
+          <table>
+            <thead><tr><th>ID</th><th>Service</th><th>Category</th><th>Rate/1000</th><th>Min</th><th>Max</th><th></th></tr></thead>
+            <tbody id="allServicesTbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Deposit -->
+      <div id="dash-deposit" class="dash-page" style="display:none">
+        <h1 class="page-title">Add Funds 💳</h1>
+        <p class="page-sub">Add money to your account. All payments are manual — approved by admin within minutes! ⚡</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start;">
+          <div class="card">
+            <div class="card-title">💳 Payment Method</div>
+            <div class="deposit-grid" id="paymentMethodsGrid"></div>
+            <div class="payment-details-box" id="paymentDetailsBox" style="display:none">
+              <div id="paymentDetailsContent"></div>
+            </div>
+            <div style="margin-top:20px;">
+              <div class="form-group">
+                <label class="form-label">💰 Amount (₹)</label>
+                <input type="number" class="form-input" id="depositAmount" placeholder="Minimum ₹50" min="50"/>
+              </div>
+              <div class="form-group">
+                <label class="form-label">🧾 Transaction ID / UTR</label>
+                <input type="text" class="form-input" id="depositTxn" placeholder="Enter your transaction/UTR ID"/>
+                <div class="form-hint">📸 After payment, enter the UTR/Transaction ID shown in your UPI app</div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">📝 Note (Optional)</label>
+                <input type="text" class="form-input" id="depositNote" placeholder="Any extra note for admin"/>
+              </div>
+              <button class="btn btn-primary btn-full" onclick="submitDeposit()">📤 Submit Deposit Request</button>
+            </div>
+          </div>
+          <div>
+            <div class="card">
+              <div class="card-title">📊 My Deposits</div>
+              <div id="myDepositsTable"></div>
+            </div>
+            <div class="card" style="margin-top:16px;background:rgba(0,230,118,.04);border-color:rgba(0,230,118,.2);">
+              <div style="font-size:1.5rem;margin-bottom:8px;">ℹ️</div>
+              <div style="font-weight:700;margin-bottom:6px;font-size:.95rem;">How Manual Payment Works</div>
+              <ul style="font-size:.82rem;color:var(--muted);line-height:2;padding-left:16px;">
+                <li>Send money to the UPI/bank details shown</li>
+                <li>Enter the UTR/Transaction ID here</li>
+                <li>Admin approves within 5-30 minutes</li>
+                <li>Balance added to your account 💚</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Transactions -->
+      <div id="dash-transactions" class="dash-page" style="display:none">
+        <h1 class="page-title">Transactions 📊</h1>
+        <p class="page-sub">Your full transaction history.</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Date</th><th>Type</th><th>Amount</th><th>Description</th><th>Status</th></tr></thead>
+            <tbody id="txnTbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     VIEW: ADMIN LOGIN
+════════════════════════════════════════ -->
+<div id="view-admin-login" class="view">
+  <div class="auth-wrap">
+    <div class="land-orb lo1" style="opacity:.3"></div>
+    <div class="auth-box">
+      <div class="auth-logo">🔐 Admin Panel</div>
+      <div class="auth-tagline">MySocialPanel.in — Admin Access</div>
+      <h2 class="auth-title">Admin Login</h2>
+      <p class="auth-sub">🔒 Restricted access only</p>
+      <div class="auth-err" id="adminLoginErr"></div>
+      <div class="form-group">
+        <label class="form-label">Admin Username</label>
+        <input type="text" class="form-input" id="adminUser" placeholder="Admin username"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Admin Password</label>
+        <input type="password" class="form-input" id="adminPass" placeholder="Admin password"/>
+      </div>
+      <button class="btn btn-primary btn-full" onclick="doAdminLogin()">🔓 Access Admin Panel</button>
+      <div class="auth-switch">
+        <a onclick="showView('login')" style="color:var(--muted)">← Back to User Login</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     VIEW: ADMIN DASHBOARD
+════════════════════════════════════════ -->
+<div id="view-admin" class="view">
+  <div class="dash-layout">
+    <!-- Admin Sidebar -->
+    <aside id="sidebar" style="border-right-color:rgba(255,60,172,.2);">
+      <div style="padding:0 8px;margin-bottom:24px;">
+        <div style="font-size:1rem;font-weight:800;color:var(--glow3);">🔐 Admin Panel</div>
+        <div style="font-size:.72rem;color:var(--muted);font-family:var(--font-m);">MySocialPanel.in</div>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-label">Management</div>
+        <div class="sidebar-link active" onclick="showAdmin('a-overview')" data-adash="a-overview">
+          <span class="s-icon">📊</span> Overview
+        </div>
+        <div class="sidebar-link" onclick="showAdmin('a-providers')" data-adash="a-providers">
+          <span class="s-icon">🔌</span> API Providers
+        </div>
+        <div class="sidebar-link" onclick="showAdmin('a-services')" data-adash="a-services">
+          <span class="s-icon">🛒</span> Manage Services
+        </div>
+        <div class="sidebar-link" onclick="showAdmin('a-orders')" data-adash="a-orders">
+          <span class="s-icon">📋</span> All Orders
+          <span class="sidebar-badge" id="adminOrderBadge" style="display:none">!</span>
+        </div>
+        <div class="sidebar-link" onclick="showAdmin('a-deposits')" data-adash="a-deposits">
+          <span class="s-icon">💳</span> Deposits
+          <span class="sidebar-badge" id="adminDepBadge" style="display:none">!</span>
+        </div>
+        <div class="sidebar-link" onclick="showAdmin('a-users')" data-adash="a-users">
+          <span class="s-icon">👥</span> Users
+        </div>
+        <div class="sidebar-link" onclick="showAdmin('a-settings')" data-adash="a-settings">
+          <span class="s-icon">⚙️</span> Settings
+        </div>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-link" onclick="adminLogout()">
+          <span class="s-icon">🚪</span> Logout
+        </div>
+      </div>
+    </aside>
+
+    <main class="dash-main">
+      <!-- Admin Overview -->
+      <div id="dash-a-overview" class="dash-page">
+        <h1 class="page-title">Admin Dashboard 📊 <span class="admin-badge">ADMIN</span></h1>
+        <p class="page-sub">Full control over MySocialPanel — manage everything from here.</p>
+        <div class="stat-grid" id="adminStats"></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+          <div class="card">
+            <div class="card-title">🕐 Pending Deposits</div>
+            <div id="adminPendingDeposits"></div>
+          </div>
+          <div class="card">
+            <div class="card-title">📋 Recent Orders</div>
+            <div id="adminRecentOrders"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- API Providers -->
+      <div id="dash-a-providers" class="dash-page" style="display:none">
+        <h1 class="page-title">🔌 API Providers</h1>
+        <p class="page-sub">Add SMM provider APIs. Fetch their services and import to your panel with custom pricing. 💡</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start;">
+          <!-- Add Provider Form -->
+          <div class="card">
+            <div class="card-title">➕ Add New Provider</div>
+            <div class="form-group">
+              <label class="form-label">Provider Name</label>
+              <input type="text" class="form-input" id="provName" placeholder="e.g. SMMKings, JustAnotherPanel"/>
+            </div>
+            <div class="form-group">
+              <label class="form-label">API URL</label>
+              <input type="text" class="form-input" id="provUrl" placeholder="https://provider.com/api/v2"/>
+              <div class="form-hint">💡 The main API endpoint URL of the provider</div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">API Key</label>
+              <input type="text" class="form-input" id="provKey" placeholder="Your API key from provider"/>
+            </div>
+            <div style="display:flex;gap:10px;">
+              <button class="btn btn-primary" onclick="addProvider()">💾 Save Provider</button>
+              <button class="btn btn-secondary" onclick="fetchProviderServices()">
+                <span id="fetchBtnText">🔄 Fetch Services</span>
+              </button>
+            </div>
+          </div>
+          <!-- Saved Providers -->
+          <div class="card">
+            <div class="card-title">📋 Saved Providers</div>
+            <div id="savedProvidersList"></div>
+          </div>
+        </div>
+        <!-- Fetched Services -->
+        <div id="fetchedServicesSection" style="display:none;margin-top:24px;">
+          <div class="card">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:12px;">
+              <div class="card-title" style="margin:0">🎯 Fetched Services — Select & Import</div>
+              <div style="display:flex;gap:10px;">
+                <input type="text" class="form-input" placeholder="🔍 Filter..." style="width:200px;padding:8px 12px;font-size:.8rem;" oninput="filterFetched(this.value)" id="fetchFilter"/>
+                <button class="btn btn-success btn-sm" onclick="importSelected()">✅ Import Selected</button>
+              </div>
+            </div>
+            <div style="margin-bottom:12px;font-family:var(--font-m);font-size:.75rem;color:var(--muted);">
+              💡 Set custom name, price type (% markup or fixed price) before importing
+            </div>
+            <!-- Price config bar -->
+            <div style="background:rgba(120,80,255,.06);border:1px solid rgba(120,80,255,.2);border-radius:var(--radius-sm);padding:14px;margin-bottom:16px;display:flex;gap:16px;align-items:center;flex-wrap:wrap;">
+              <span style="font-size:.82rem;font-weight:700;">⚡ Bulk Set All:</span>
+              <select class="price-type-sel" id="bulkPriceType">
+                <option value="percent">% Markup over Cost</option>
+                <option value="fixed">Fixed Price per 1000</option>
+                <option value="multiplier">× Multiplier</option>
+              </select>
+              <input type="number" class="price-val-in" id="bulkPriceVal" placeholder="30" value="30" style="width:90px"/>
+              <button class="btn btn-secondary btn-sm" onclick="applyBulkPrice()">Apply to All</button>
+              <label style="display:flex;align-items:center;gap:6px;font-size:.82rem;cursor:pointer;">
+                <input type="checkbox" id="selectAllFetched" onchange="toggleSelectAll(this.checked)"/> Select All
+              </label>
+            </div>
+            <div class="fetched-services-wrap" id="fetchedServicesList"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Manage Services -->
+      <div id="dash-a-services" class="dash-page" style="display:none">
+        <h1 class="page-title">🛒 Manage Services</h1>
+        <p class="page-sub">Enable/disable services, edit names, update prices — all your panel services in one place.</p>
+        <!-- Add manual service -->
+        <div class="card" style="margin-bottom:24px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:16px;">
+            <div class="card-title" style="margin:0">➕ Add Service Manually</div>
+            <button class="btn btn-primary btn-sm" onclick="openAddServiceModal()">➕ Add New Service</button>
+          </div>
+          <div class="form-group" style="max-width:400px;margin-bottom:0">
+            <input type="text" class="form-input" placeholder="🔍 Search services..." oninput="filterManageServices(this.value)"/>
+          </div>
+        </div>
+        <!-- Services table -->
+        <div id="manageServicesList"></div>
+      </div>
+
+      <!-- All Orders -->
+      <div id="dash-a-orders" class="dash-page" style="display:none">
+        <h1 class="page-title">📋 All Orders</h1>
+        <p class="page-sub">View and manage all customer orders. Update status here.</p>
+        <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;">
+          <select class="form-select" style="width:160px;" id="orderFilterStatus" onchange="renderAdminOrders()">
+            <option value="">All Status</option>
+            <option value="pending">Pending</option>
+            <option value="processing">Processing</option>
+            <option value="completed">Completed</option>
+            <option value="cancelled">Cancelled</option>
+          </select>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>ID</th><th>User</th><th>Service</th><th>Link</th><th>Qty</th><th>Amount</th><th>Status</th><th>Date</th><th>Action</th></tr></thead>
+            <tbody id="adminOrdersTbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Deposits -->
+      <div id="dash-a-deposits" class="dash-page" style="display:none">
+        <h1 class="page-title">💳 Deposits</h1>
+        <p class="page-sub">Review and approve/reject manual deposit requests.</p>
+        <div class="admin-tabs">
+          <button class="admin-tab-btn active" onclick="switchDepTab('pending',this)">⏳ Pending</button>
+          <button class="admin-tab-btn" onclick="switchDepTab('approved',this)">✅ Approved</button>
+          <button class="admin-tab-btn" onclick="switchDepTab('rejected',this)">❌ Rejected</button>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>ID</th><th>User</th><th>Amount</th><th>Method</th><th>UTR/TXN</th><th>Note</th><th>Date</th><th>Action</th></tr></thead>
+            <tbody id="adminDepTbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Users -->
+      <div id="dash-a-users" class="dash-page" style="display:none">
+        <h1 class="page-title">👥 Manage Users</h1>
+        <p class="page-sub">View all users, adjust their balances, manage accounts.</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Username</th><th>Email</th><th>Balance</th><th>Orders</th><th>Joined</th><th>Actions</th></tr></thead>
+            <tbody id="adminUsersTbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Settings -->
+      <div id="dash-a-settings" class="dash-page" style="display:none">
+        <h1 class="page-title">⚙️ Panel Settings</h1>
+        <p class="page-sub">Configure payment methods, panel info, and more.</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;">
+          <div class="card">
+            <div class="card-title">💳 Payment Methods</div>
+            <div class="form-group">
+              <label class="form-label">UPI ID 1</label>
+              <input type="text" class="form-input" id="sUpi1" placeholder="yourname@upi"/>
+            </div>
+            <div class="form-group">
+              <label class="form-label">UPI ID 2 (Backup)</label>
+              <input type="text" class="form-input" id="sUpi2" placeholder="backup@upi"/>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Bank Name</label>
+              <input type="text" class="form-input" id="sBankName" placeholder="e.g. SBI, HDFC"/>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Account Number</label>
+              <input type="text" class="form-input" id="sBankAcc" placeholder="Bank account number"/>
+            </div>
+            <div class="form-group">
+              <label class="form-label">IFSC Code</label>
+              <input type="text" class="form-input" id="sBankIfsc" placeholder="SBIN0001234"/>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Account Holder Name</label>
+              <input type="text" class="form-input" id="sBankHolder" placeholder="Full name"/>
+            </div>
+            <button class="btn btn-primary" onclick="saveSettings()">💾 Save Payment Info</button>
+          </div>
+          <div class="card">
+            <div class="card-title">🌐 Panel Settings</div>
+            <div class="form-group">
+              <label class="form-label">Panel Name</label>
+              <input type="text" class="form-input" id="sPanelName" value="MySocialPanel"/>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Panel Website</label>
+              <input type="text" class="form-input" id="sPanelUrl" value="MySocialPanel.in"/>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Minimum Deposit (₹)</label>
+              <input type="number" class="form-input" id="sMinDeposit" value="50"/>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Welcome Bonus (₹)</label>
+              <input type="number" class="form-input" id="sWelcomeBonus" value="0"/>
+              <div class="form-hint">💡 New users get this amount on signup (0 = disabled)</div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Support Telegram</label>
+              <input type="text" class="form-input" id="sSupport" placeholder="@yourtelegram"/>
+            </div>
+            <button class="btn btn-primary" onclick="saveSettings()">💾 Save Settings</button>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════════════════
+//  MYSOCIALPANEL — COMPLETE ENGINE
+// ══════════════════════════════════════════════════════════
+
+/* ── DATA STORE ── */
+const DB = {
+  get(k){try{return JSON.parse(localStorage.getItem('msp_'+k))||null;}catch{return null;}},
+  set(k,v){localStorage.setItem('msp_'+k,JSON.stringify(v));},
+  push(k,item){const a=DB.get(k)||[];a.push(item);DB.set(k,a);}
+};
+
+/* ── DEFAULTS SEED ── */
+function seedDefaults(){
+  if(!DB.get('seeded')){
+    DB.set('users',[]);
+    DB.set('orders',[]);
+    DB.set('deposits',[]);
+    DB.set('providers',[]);
+    DB.set('txns',[]);
+    DB.set('settings',{
+      upi1:'mysocialpanel@upi',upi2:'',
+      bankName:'State Bank of India',bankAcc:'1234567890',
+      bankIfsc:'SBIN0001234',bankHolder:'MySocialPanel Admin',
+      panelName:'MySocialPanel',panelUrl:'MySocialPanel.in',
+      minDeposit:50,welcomeBonus:0,support:'@MySocialPanel'
+    });
+    DB.set('services', DEMO_SERVICES);
+    DB.set('seeded',true);
+  }
+}
+
+const DEMO_SERVICES = [
+  {id:'S001',name:'Instagram Followers — Real Looking',category:'Instagram',rate:18,min:100,max:50000,enabled:true,desc:'High quality followers. Gradual delivery. No drop.'},
+  {id:'S002',name:'Instagram Likes — Instant',category:'Instagram',rate:8,min:50,max:100000,enabled:true,desc:'Fast likes delivery within minutes.'},
+  {id:'S003',name:'Instagram Views — Reel/Post',category:'Instagram',rate:3,min:500,max:1000000,enabled:true,desc:'Real looking video views.'},
+  {id:'S004',name:'Instagram Story Views',category:'Instagram',rate:5,min:100,max:50000,enabled:true,desc:'Story views delivered fast.'},
+  {id:'S005',name:'YouTube Views — High Retention',category:'YouTube',rate:25,min:500,max:500000,enabled:true,desc:'Watch time counted, safe for monetization.'},
+  {id:'S006',name:'YouTube Subscribers',category:'YouTube',rate:45,min:100,max:20000,enabled:true,desc:'Gradual delivery, no drop guarantee.'},
+  {id:'S007',name:'YouTube Likes',category:'YouTube',rate:12,min:100,max:100000,enabled:true,desc:'Fast likes for your videos.'},
+  {id:'S008',name:'Telegram Channel Members',category:'Telegram',rate:22,min:100,max:200000,enabled:true,desc:'Real looking members.'},
+  {id:'S009',name:'Telegram Post Views',category:'Telegram',rate:4,min:500,max:5000000,enabled:true,desc:'Instant views for any post.'},
+  {id:'S010',name:'TikTok Followers',category:'TikTok',rate:20,min:100,max:100000,enabled:true,desc:'Followers from real-looking accounts.'},
+  {id:'S011',name:'TikTok Likes',category:'TikTok',rate:6,min:100,max:500000,enabled:true,desc:'Fast TikTok likes.'},
+  {id:'S012',name:'TikTok Views',category:'TikTok',rate:2.5,min:1000,max:10000000,enabled:true,desc:'Massive views boost.'},
+  {id:'S013',name:'Facebook Page Likes',category:'Facebook',rate:30,min:100,max:50000,enabled:true,desc:'Real looking page likes.'},
+  {id:'S014',name:'Twitter/X Followers',category:'Twitter/X',rate:35,min:100,max:20000,enabled:true,desc:'Quality followers for your X profile.'},
+  {id:'S015',name:'Twitter/X Likes',category:'Twitter/X',rate:10,min:100,max:100000,enabled:true,desc:'Tweet likes delivered fast.'},
+  {id:'S016',name:'Spotify Streams',category:'Spotify',rate:15,min:1000,max:1000000,enabled:true,desc:'Music streams from real accounts.'},
+  {id:'S017',name:'LinkedIn Followers',category:'LinkedIn',rate:55,min:50,max:5000,enabled:true,desc:'Professional profile followers.'},
+  {id:'S018',name:'Snapchat Followers',category:'Snapchat',rate:40,min:100,max:10000,enabled:true,desc:'Snapchat account followers.'},
+];
+
+/* ── STATE ── */
+let currentUser = null;
+let isAdmin = false;
+let currentDepTab = 'pending';
+let currentAdminPage = 'a-overview';
+let fetchedServices = [];
+
+/* ══════════════════════════════════════
+   TOAST
+══════════════════════════════════════ */
+function toast(msg,type='info',dur=3000){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.className='';
+  void t.offsetWidth;
+  t.className=`show ${type}`;
+  setTimeout(()=>t.classList.remove('show'),dur);
+}
+
+/* ══════════════════════════════════════
+   VIEW ROUTER
+══════════════════════════════════════ */
+function showView(name){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  const el=document.getElementById('view-'+name);
+  if(el)el.classList.add('active');
+  updateNav();
+  window.scrollTo(0,0);
+  // Load data for views
+  if(name==='dashboard') loadDashboard();
+  if(name==='admin') loadAdminPanel();
+  if(name==='admin-login') setupAdminLogin();
+}
+function goHome(){
+  if(currentUser)showView('dashboard');
+  else if(isAdmin)showView('admin');
+  else showView('landing');
+}
+function updateNav(){
+  const bal=document.getElementById('navBalance');
+  const guestBtns=document.getElementById('guestBtns');
+  const userWrap=document.getElementById('userMenuWrap');
+  if(currentUser){
+    guestBtns.style.display='none';
+    userWrap.style.display='flex';
+    bal.style.display='block';
+    document.getElementById('navUsername').textContent=currentUser.username;
+    document.getElementById('navAvatar').textContent=currentUser.username[0].toUpperCase();
+    bal.textContent='💰 ₹'+currentUser.balance.toFixed(2);
+  }else{
+    guestBtns.style.display='flex';
+    userWrap.style.display='none';
+    bal.style.display='none';
+  }
+}
+function toggleDropdown(){
+  document.getElementById('userDropdown').classList.toggle('open');
+}
+document.addEventListener('click',e=>{
+  const dd=document.getElementById('userDropdown');
+  if(dd&&!dd.closest('.nav-user-menu')?.contains(e.target))dd.classList.remove('open');
+});
+function toggleSidebar(){
+  document.getElementById('sidebar').classList.toggle('open');
+}
+function scrollToServices(){
+  document.getElementById('servicesSection')?.scrollIntoView({behavior:'smooth'});
+}
+function setupAdminLogin(){
+  document.getElementById('adminUser').value='';
+  document.getElementById('adminPass').value='';
+  document.getElementById('adminLoginErr').style.display='none';
+}
+
+/* ══════════════════════════════════════
+   AUTH
+══════════════════════════════════════ */
+function doSignup(){
+  const u=document.getElementById('signupUsername').value.trim();
+  const e=document.getElementById('signupEmail').value.trim();
+  const p=document.getElementById('signupPass').value;
+  const err=document.getElementById('signupErr');
+  err.style.display='none';
+  if(!u){err.textContent='❌ Username is required';err.style.display='block';return;}
+  if(u.length<3){err.textContent='❌ Username must be at least 3 characters';err.style.display='block';return;}
+  if(!e||!e.includes('@')){err.textContent='❌ Valid email is required';err.style.display='block';return;}
+  if(p.length<6){err.textContent='❌ Password must be at least 6 characters';err.style.display='block';return;}
+  const users=DB.get('users')||[];
+  if(users.find(x=>x.username.toLowerCase()===u.toLowerCase())){
+    err.textContent='❌ Username already taken. Try another.';err.style.display='block';return;
+  }
+  if(users.find(x=>x.email.toLowerCase()===e.toLowerCase())){
+    err.textContent='❌ Email already registered.';err.style.display='block';return;
+  }
+  const settings=DB.get('settings')||{welcomeBonus:0};
+  const bonus=parseFloat(settings.welcomeBonus)||0;
+  const newUser={id:'U'+Date.now(),username:u,email:e,password:p,balance:bonus,joined:new Date().toISOString()};
+  users.push(newUser);
+  DB.set('users',users);
+  if(bonus>0){
+    const txns=DB.get('txns')||[];
+    txns.push({id:'T'+Date.now(),userId:newUser.id,type:'bonus',amount:bonus,desc:'Welcome bonus',status:'completed',date:new Date().toISOString()});
+    DB.set('txns',txns);
+  }
+  currentUser=newUser;
+  toast('🎉 Account created! Welcome to MySocialPanel!','success');
+  showView('dashboard');
+}
+function doLogin(){
+  const u=document.getElementById('loginUser').value.trim();
+  const p=document.getElementById('loginPass').value;
+  const err=document.getElementById('loginErr');
+  err.style.display='none';
+  if(!u||!p){err.textContent='❌ Please fill all fields';err.style.display='block';return;}
+  const users=DB.get('users')||[];
+  const user=users.find(x=>(x.username.toLowerCase()===u.toLowerCase()||x.email.toLowerCase()===u.toLowerCase())&&x.password===p);
+  if(!user){err.textContent='❌ Wrong username/email or password';err.style.display='block';return;}
+  currentUser=user;
+  toast('✅ Logged in! Welcome back, '+user.username+'!','success');
+  showView('dashboard');
+}
+function logout(){
+  currentUser=null;
+  showView('landing');
+  toast('👋 Logged out successfully');
+}
+function doAdminLogin(){
+  const u=document.getElementById('adminUser').value.trim();
+  const p=document.getElementById('adminPass').value;
+  const err=document.getElementById('adminLoginErr');
+  err.style.display='none';
+  if(u==='harshit0987'&&p==='Harshit@1234'){
+    isAdmin=true;
+    toast('🔐 Admin access granted!','success');
+    showView('admin');
+  }else{
+    err.textContent='❌ Wrong admin credentials!';err.style.display='block';
+  }
+}
+function adminLogout(){isAdmin=false;showView('landing');}
+
+/* ══════════════════════════════════════
+   LANDING PAGE
+══════════════════════════════════════ */
+function renderLanding(){
+  const services=DB.get('services')||[];
+  const cats=[...new Set(services.filter(s=>s.enabled).map(s=>s.category))];
+  const tabsEl=document.getElementById('platformTabs');
+  if(tabsEl){
+    tabsEl.innerHTML='';
+    cats.forEach((c,i)=>{
+      const b=document.createElement('button');
+      b.className='admin-tab-btn'+(i===0?' active':'');
+      b.textContent=c;
+      b.onclick=()=>{
+        tabsEl.querySelectorAll('.admin-tab-btn').forEach(x=>x.classList.remove('active'));
+        b.classList.add('active');
+        renderLandServices(c);
+      };
+      tabsEl.appendChild(b);
+    });
+    if(cats[0])renderLandServices(cats[0]);
+  }
+}
+function renderLandServices(cat){
+  const services=(DB.get('services')||[]).filter(s=>s.enabled&&s.category===cat);
+  const tbody=document.getElementById('landServicesTbody');
+  if(!tbody)return;
+  tbody.innerHTML=services.slice(0,8).map(s=>`
+    <tr>
+      <td class="td-mono" style="color:var(--muted)">${s.id}</td>
+      <td style="font-weight:600">${s.name}</td>
+      <td class="td-mono" style="color:var(--glow2)">₹${s.rate.toFixed(2)}</td>
+      <td class="td-mono">${s.min.toLocaleString()}</td>
+      <td class="td-mono">${s.max.toLocaleString()}</td>
+      <td><button class="btn btn-primary btn-xs" onclick="showView('signup')">Order →</button></td>
+    </tr>`).join('');
+}
+
+/* ══════════════════════════════════════
+   USER DASHBOARD
+══════════════════════════════════════ */
+function loadDashboard(){
+  if(!currentUser)return;
+  // Refresh user data from DB
+  const users=DB.get('users')||[];
+  currentUser=users.find(u=>u.id===currentUser.id)||currentUser;
+  updateNav();
+  showDash('overview');
+}
+function showDash(page){
+  document.querySelectorAll('.dash-page').forEach(p=>{p.style.display='none';});
+  document.querySelectorAll('.sidebar-link[data-dash]').forEach(l=>{l.classList.remove('active');});
+  const el=document.getElementById('dash-'+page);
+  if(el)el.style.display='block';
+  const link=document.querySelector(`.sidebar-link[data-dash="${page}"]`);
+  if(link)link.classList.add('active');
+  document.getElementById('sidebar').classList.remove('open');
+  // Render page data
+  if(page==='overview')renderOverview();
+  if(page==='neworder')renderNewOrder();
+  if(page==='orders')renderMyOrders();
+  if(page==='services-list')renderAllServices();
+  if(page==='deposit')renderDeposit();
+  if(page==='transactions')renderTransactions();
+}
+function renderOverview(){
+  if(!currentUser)return;
+  const users=DB.get('users')||[];
+  currentUser=users.find(u=>u.id===currentUser.id)||currentUser;
+  document.getElementById('dashGreeting').textContent=`Hello, ${currentUser.username}! 👋`;
+  const orders=(DB.get('orders')||[]).filter(o=>o.userId===currentUser.id);
+  const pending=orders.filter(o=>o.status==='pending').length;
+  const completed=orders.filter(o=>o.status==='completed').length;
+  document.getElementById('overviewStats').innerHTML=`
+    <div class="stat-card"><div class="stat-icon si-green">💰</div><div class="stat-info"><div class="stat-val">₹${currentUser.balance.toFixed(2)}</div><div class="stat-lbl">Account Balance</div></div></div>
+    <div class="stat-card"><div class="stat-icon si-cyan">📋</div><div class="stat-info"><div class="stat-val">${orders.length}</div><div class="stat-lbl">Total Orders</div></div></div>
+    <div class="stat-card"><div class="stat-icon si-yellow">⏳</div><div class="stat-info"><div class="stat-val">${pending}</div><div class="stat-lbl">Pending Orders</div></div></div>
+    <div class="stat-card"><div class="stat-icon si-purple">✅</div><div class="stat-info"><div class="stat-val">${completed}</div><div class="stat-lbl">Completed</div></div></div>
+  `;
+  if(pending>0)document.getElementById('pendingBadge').style.display='inline';
+  const recent=orders.slice(-5).reverse();
+  document.getElementById('recentOrdersTable').innerHTML=recent.length?`
+    <div class="table-wrap"><table>
+      <thead><tr><th>ID</th><th>Service</th><th>Qty</th><th>Status</th></tr></thead>
+      <tbody>${recent.map(o=>`<tr>
+        <td class="td-mono" style="color:var(--muted)">${o.id}</td>
+        <td style="font-size:.82rem">${o.serviceName}</td>
+        <td class="td-mono">${o.qty.toLocaleString()}</td>
+        <td><span class="badge badge-${o.status}">${o.status.toUpperCase()}</span></td>
+      </tr>`).join('')}</tbody>
+    </table></div>`:'<p style="color:var(--muted);font-size:.85rem;padding:20px 0;text-align:center">No orders yet. <a onclick="showDash(\'neworder\')" style="color:var(--glow);cursor:pointer">Place your first order! 🚀</a></p>';
+}
+
+function renderNewOrder(){
+  const services=(DB.get('services')||[]).filter(s=>s.enabled);
+  const cats=[...new Set(services.map(s=>s.category))];
+  const catSel=document.getElementById('orderCategory');
+  catSel.innerHTML=cats.map(c=>`<option value="${c}">${c}</option>`).join('');
+  filterOrderServices();
+}
+function filterOrderServices(){
+  const cat=document.getElementById('orderCategory').value;
+  const services=(DB.get('services')||[]).filter(s=>s.enabled&&s.category===cat);
+  const svcSel=document.getElementById('orderService');
+  svcSel.innerHTML=services.map(s=>`<option value="${s.id}">${s.name} — ₹${s.rate}/1000</option>`).join('');
+  updateOrderPreview();
+}
+function updateOrderPreview(){
+  const svcId=document.getElementById('orderService').value;
+  const qty=parseInt(document.getElementById('orderQty').value)||0;
+  const link=document.getElementById('orderLink').value.trim();
+  const service=(DB.get('services')||[]).find(s=>s.id===svcId);
+  if(!service){document.getElementById('orderPreviewContent').innerHTML='<p style="color:var(--muted);font-size:.85rem;text-align:center;padding:20px 0">Select a service ☝️</p>';return;}
+  document.getElementById('qtyHint').textContent=`Min: ${service.min.toLocaleString()} — Max: ${service.max.toLocaleString()}`;
+  const descBox=document.getElementById('serviceDescBox');
+  if(service.desc){descBox.style.display='block';descBox.textContent='💡 '+service.desc;}
+  else descBox.style.display='none';
+  const price=qty>0?(qty/1000*service.rate):0;
+  document.getElementById('orderPreviewContent').innerHTML=`
+    <div class="order-preview">
+      <div class="order-row"><span class="order-key">Service</span><span class="order-val" style="font-size:.82rem;text-align:right;max-width:200px">${service.name}</span></div>
+      <div class="order-row"><span class="order-key">Rate per 1000</span><span class="order-val" style="color:var(--glow2)">₹${service.rate.toFixed(2)}</span></div>
+      <div class="order-row"><span class="order-key">Quantity</span><span class="order-val">${qty>0?qty.toLocaleString():'—'}</span></div>
+      <div class="order-row"><span class="order-key">Link</span><span class="order-val" style="font-size:.72rem;max-width:180px;overflow:hidden;text-overflow:ellipsis">${link||'—'}</span></div>
+      <div class="order-row total-row"><span class="order-key" style="font-weight:700">💰 Total</span><span class="order-val">₹${price.toFixed(2)}</span></div>
+      <div class="order-row"><span class="order-key">Your Balance</span><span class="order-val" style="color:${currentUser?.balance>=price&&price>0?'var(--green)':'var(--red)'}">₹${(currentUser?.balance||0).toFixed(2)}</span></div>
+    </div>`;
+}
+function placeOrder(){
+  if(!currentUser){toast('❌ Please login first','error');return;}
+  const users=DB.get('users')||[];
+  currentUser=users.find(u=>u.id===currentUser.id)||currentUser;
+  const svcId=document.getElementById('orderService').value;
+  const qty=parseInt(document.getElementById('orderQty').value)||0;
+  const link=document.getElementById('orderLink').value.trim();
+  const service=(DB.get('services')||[]).find(s=>s.id===svcId);
+  if(!service){toast('❌ Select a service','error');return;}
+  if(!link){toast('❌ Enter your link/username','error');return;}
+  if(qty<service.min||qty>service.max){toast(`❌ Quantity must be ${service.min.toLocaleString()} — ${service.max.toLocaleString()},'error'`);return;}
+  const price=qty/1000*service.rate;
+  if(currentUser.balance<price){toast('❌ Insufficient balance! Add funds first.','error');return;}
+  // Deduct balance
+  const uidx=users.findIndex(u=>u.id===currentUser.id);
+  users[uidx].balance=parseFloat((users[uidx].balance-price).toFixed(2));
+  currentUser=users[uidx];
+  DB.set('users',users);
+  const order={
+    id:'ORD'+Date.now(),userId:currentUser.id,username:currentUser.username,
+    serviceId:svcId,serviceName:service.name,link,qty,amount:parseFloat(price.toFixed(2)),
+    status:'pending',date:new Date().toISOString()
+  };
+  DB.push('orders',order);
+  DB.push('txns',{id:'T'+Date.now(),userId:currentUser.id,type:'order',amount:-price,desc:'Order: '+service.name,status:'completed',date:new Date().toISOString()});
+  updateNav();
+  toast('🚀 Order placed successfully! Order ID: '+order.id,'success');
+  document.getElementById('orderLink').value='';
+  document.getElementById('orderQty').value='';
+  updateOrderPreview();
+  showDash('orders');
+}
+
+function renderMyOrders(){
+  const orders=(DB.get('orders')||[]).filter(o=>o.userId===currentUser.id).reverse();
+  document.getElementById('myOrdersTbody').innerHTML=orders.length?orders.map(o=>`
+    <tr>
+      <td class="td-mono" style="color:var(--muted);font-size:.72rem">${o.id}</td>
+      <td style="font-size:.82rem;max-width:180px">${o.serviceName}</td>
+      <td style="font-size:.78rem;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"><a href="${o.link}" target="_blank" style="color:var(--glow2)">${o.link}</a></td>
+      <td class="td-mono">${o.qty.toLocaleString()}</td>
+      <td class="td-mono" style="color:var(--green)">₹${o.amount.toFixed(2)}</td>
+      <td><span class="badge badge-${o.status}">${o.status.toUpperCase()}</span></td>
+      <td class="td-mono" style="font-size:.72rem;color:var(--muted)">${new Date(o.date).toLocaleDateString()}</td>
+    </tr>`).join(''):'<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:32px">No orders yet! <a onclick="showDash(\'neworder\')" style="color:var(--glow);cursor:pointer">Place first order 🚀</a></td></tr>';
+}
+
+function renderAllServices(){
+  const services=(DB.get('services')||[]).filter(s=>s.enabled);
+  renderServicesTable(services,'allServicesTbody');
+}
+function searchServices(q){
+  const services=(DB.get('services')||[]).filter(s=>s.enabled&&(s.name.toLowerCase().includes(q.toLowerCase())||s.category.toLowerCase().includes(q.toLowerCase())));
+  renderServicesTable(services,'allServicesTbody');
+}
+function renderServicesTable(services,tbodyId){
+  document.getElementById(tbodyId).innerHTML=services.map(s=>`
+    <tr>
+      <td class="td-mono" style="color:var(--muted)">${s.id}</td>
+      <td style="font-weight:600;font-size:.88rem">${s.name}</td>
+      <td><span class="badge badge-processing">${s.category}</span></td>
+      <td class="td-mono" style="color:var(--glow2)">₹${s.rate.toFixed(2)}</td>
+      <td class="td-mono">${s.min.toLocaleString()}</td>
+      <td class="td-mono">${s.max.toLocaleString()}</td>
+      <td><button class="btn btn-primary btn-xs" onclick="quickOrder('${s.id}')">Order</button></td>
+    </tr>`).join('')||'<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:24px">No services found</td></tr>';
+}
+function quickOrder(svcId){
+  showDash('neworder');
+  setTimeout(()=>{
+    const s=(DB.get('services')||[]).find(x=>x.id===svcId);
+    if(s){
+      const catSel=document.getElementById('orderCategory');
+      catSel.value=s.category;filterOrderServices();
+      setTimeout(()=>{document.getElementById('orderService').value=svcId;updateOrderPreview();},100);
+    }
+  },100);
+}
+
+/* ── DEPOSIT ── */
+function renderDeposit(){
+  const settings=DB.get('settings')||{};
+  const methods=[];
+  if(settings.upi1)methods.push({id:'upi1',icon:'📱',name:'UPI Payment',desc:settings.upi1});
+  if(settings.bankAcc)methods.push({id:'bank',icon:'🏦',name:'Bank Transfer',desc:settings.bankName||'Bank Transfer'});
+  if(!methods.length)methods.push({id:'upi1',icon:'📱',name:'UPI Payment',desc:'Contact admin for UPI ID'});
+  const grid=document.getElementById('paymentMethodsGrid');
+  grid.innerHTML=methods.map((m,i)=>`
+    <div class="payment-method-card${i===0?' selected':''}" onclick="selectMethod('${m.id}',this)">
+      <div class="pm-icon">${m.icon}</div>
+      <div class="pm-name">${m.name}</div>
+      <div class="pm-desc">${m.desc}</div>
+    </div>`).join('');
+  if(methods[0])showPaymentDetails(methods[0].id);
+  renderMyDeposits();
+}
+function selectMethod(id,el){
+  document.querySelectorAll('.payment-method-card').forEach(c=>c.classList.remove('selected'));
+  el.classList.add('selected');
+  showPaymentDetails(id);
+}
+function showPaymentDetails(id){
+  const settings=DB.get('settings')||{};
+  const box=document.getElementById('paymentDetailsBox');
+  const content=document.getElementById('paymentDetailsContent');
+  box.style.display='block';
+  if(id==='upi1'){
+    content.innerHTML=`
+      <div style="font-weight:700;font-size:.9rem;margin-bottom:12px;color:var(--green)">📱 UPI Payment Details</div>
+      <div class="pd-row"><span class="pd-key">UPI ID</span><span class="pd-val">${settings.upi1||'—'}</span><button class="copy-btn" onclick="copyText('${settings.upi1||''}')">Copy</button></div>
+      ${settings.upi2?`<div class="pd-row"><span class="pd-key">Backup UPI</span><span class="pd-val">${settings.upi2}</span></div>`:''}
+      <div style="margin-top:12px;font-size:.78rem;color:var(--muted);line-height:1.7">
+        ✅ Send exact amount to UPI ID above<br/>
+        ✅ Note the UTR/Transaction ID from your UPI app<br/>
+        ✅ Enter UTR below and submit request
+      </div>`;
+  }else{
+    content.innerHTML=`
+      <div style="font-weight:700;font-size:.9rem;margin-bottom:12px;color:var(--green)">🏦 Bank Transfer Details</div>
+      <div class="pd-row"><span class="pd-key">Bank</span><span class="pd-val">${settings.bankName||'—'}</span></div>
+      <div class="pd-row"><span class="pd-key">Account No</span><span class="pd-val">${settings.bankAcc||'—'}</span><button class="copy-btn" onclick="copyText('${settings.bankAcc||''}')">Copy</button></div>
+      <div class="pd-row"><span class="pd-key">IFSC Code</span><span class="pd-val">${settings.bankIfsc||'—'}</span><button class="copy-btn" onclick="copyText('${settings.bankIfsc||''}')">Copy</button></div>
+      <div class="pd-row"><span class="pd-key">Holder Name</span><span class="pd-val">${settings.bankHolder||'—'}</span></div>`;
+  }
+}
+function copyText(t){if(!t){toast('Nothing to copy','error');return;}navigator.clipboard?.writeText(t).then(()=>toast('✅ Copied!','success'));}
+function submitDeposit(){
+  const amt=parseFloat(document.getElementById('depositAmount').value)||0;
+  const txn=document.getElementById('depositTxn').value.trim();
+  const note=document.getElementById('depositNote').value.trim();
+  const settings=DB.get('settings')||{minDeposit:50};
+  if(amt<(settings.minDeposit||50)){toast(`❌ Minimum deposit is ₹${settings.minDeposit||50}`,'error');return;}
+  if(!txn){toast('❌ Enter Transaction ID / UTR','error');return;}
+  const dep={id:'DEP'+Date.now(),userId:currentUser.id,username:currentUser.username,
+    amount:amt,method:'UPI/Bank',txnId:txn,note,status:'pending',date:new Date().toISOString()};
+  DB.push('deposits',dep);
+  document.getElementById('depositAmount').value='';
+  document.getElementById('depositTxn').value='';
+  document.getElementById('depositNote').value='';
+  toast('📤 Deposit request submitted! Admin will approve shortly ⚡','success',4000);
+  renderMyDeposits();
+}
+function renderMyDeposits(){
+  const deps=(DB.get('deposits')||[]).filter(d=>d.userId===currentUser.id).reverse();
+  document.getElementById('myDepositsTable').innerHTML=deps.length?`
+    <div class="table-wrap"><table>
+      <thead><tr><th>Amount</th><th>UTR</th><th>Status</th><th>Date</th></tr></thead>
+      <tbody>${deps.map(d=>`<tr>
+        <td class="td-mono" style="color:var(--green)">₹${d.amount}</td>
+        <td class="td-mono" style="font-size:.72rem">${d.txnId}</td>
+        <td><span class="badge badge-${d.status}">${d.status.toUpperCase()}</span></td>
+        <td class="td-mono" style="font-size:.72rem;color:var(--muted)">${new Date(d.date).toLocaleDateString()}</td>
+      </tr>`).join('')}</tbody>
+    </table></div>`:'<p style="color:var(--muted);font-size:.85rem;padding:20px 0;text-align:center">No deposits yet. Submit your first deposit above!</p>';
+}
+
+function renderTransactions(){
+  const txns=(DB.get('txns')||[]).filter(t=>t.userId===currentUser.id).reverse();
+  document.getElementById('txnTbody').innerHTML=txns.length?txns.map(t=>`
+    <tr>
+      <td class="td-mono" style="font-size:.72rem;color:var(--muted)">${new Date(t.date).toLocaleDateString()}</td>
+      <td><span class="badge badge-${t.type==='credit'||t.type==='bonus'?'completed':'processing'}">${t.type.toUpperCase()}</span></td>
+      <td class="td-mono" style="color:${t.amount>=0?'var(--green)':'var(--red)'}">${t.amount>=0?'+':''}₹${Math.abs(t.amount).toFixed(2)}</td>
+      <td style="font-size:.82rem">${t.desc}</td>
+      <td><span class="badge badge-${t.status}">${t.status.toUpperCase()}</span></td>
+    </tr>`).join(''):'<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:32px">No transactions yet</td></tr>';
+}
+
+/* ══════════════════════════════════════
+   ADMIN PANEL
+══════════════════════════════════════ */
+function loadAdminPanel(){
+  showAdmin('a-overview');
+  loadSettings();
+}
+function showAdmin(page){
+  document.querySelectorAll('.dash-page').forEach(p=>p.style.display='none');
+  document.querySelectorAll('.sidebar-link[data-adash]').forEach(l=>l.classList.remove('active'));
+  const el=document.getElementById('dash-'+page);
+  if(el)el.style.display='block';
+  const link=document.querySelector(`.sidebar-link[data-adash="${page}"]`);
+  if(link)link.classList.add('active');
+  currentAdminPage=page;
+  document.getElementById('sidebar').classList.remove('open');
+  if(page==='a-overview')renderAdminOverview();
+  if(page==='a-providers')renderProviders();
+  if(page==='a-services')renderManageServices();
+  if(page==='a-orders')renderAdminOrders();
+  if(page==='a-deposits')renderAdminDeposits();
+  if(page==='a-users')renderAdminUsers();
+  if(page==='a-settings')loadSettings();
+}
+
+function renderAdminOverview(){
+  const users=DB.get('users')||[];
+  const orders=DB.get('orders')||[];
+  const deps=DB.get('deposits')||[];
+  const pendingDeps=deps.filter(d=>d.status==='pending');
+  const pendingOrders=orders.filter(o=>o.status==='pending');
+  if(pendingDeps.length>0){
+    document.getElementById('adminDepBadge').style.display='inline';
+    document.getElementById('adminDepBadge').textContent=pendingDeps.length;
+  }
+  if(pendingOrders.length>0){
+    document.getElementById('adminOrderBadge').style.display='inline';
+    document.getElementById('adminOrderBadge').textContent=pendingOrders.length;
+  }
+  const totalRevenue=orders.filter(o=>o.status!=='cancelled').reduce((s,o)=>s+o.amount,0);
+  document.getElementById('adminStats').innerHTML=`
+    <div class="stat-card"><div class="stat-icon si-purple">👥</div><div class="stat-info"><div class="stat-val">${users.length}</div><div class="stat-lbl">Total Users</div></div></div>
+    <div class="stat-card"><div class="stat-icon si-cyan">📋</div><div class="stat-info"><div class="stat-val">${orders.length}</div><div class="stat-lbl">Total Orders</div></div></div>
+    <div class="stat-card"><div class="stat-icon si-yellow">⏳</div><div class="stat-info"><div class="stat-val">${pendingDeps.length}</div><div class="stat-lbl">Pending Deposits</div></div></div>
+    <div class="stat-card"><div class="stat-icon si-green">💰</div><div class="stat-info"><div class="stat-val">₹${totalRevenue.toFixed(0)}</div><div class="stat-lbl">Total Revenue</div></div></div>
+  `;
+  // Pending deposits
+  document.getElementById('adminPendingDeposits').innerHTML=pendingDeps.length?pendingDeps.slice(0,5).map(d=>`
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);">
+      <div><div style="font-size:.85rem;font-weight:600">${d.username}</div><div style="font-size:.72rem;color:var(--muted);font-family:var(--font-m)">${d.txnId}</div></div>
+      <div style="text-align:right"><div style="color:var(--green);font-weight:700">₹${d.amount}</div>
+      <div style="display:flex;gap:6px;margin-top:4px">
+        <button class="btn btn-success btn-xs" onclick="approveDeposit('${d.id}')">✅</button>
+        <button class="btn btn-danger btn-xs" onclick="rejectDeposit('${d.id}')">❌</button>
+      </div></div>
+    </div>`).join(''):'<p style="color:var(--muted);font-size:.85rem;text-align:center;padding:20px 0">✅ No pending deposits</p>';
+  // Recent orders
+  document.getElementById('adminRecentOrders').innerHTML=orders.slice(-5).reverse().map(o=>`
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);">
+      <div><div style="font-size:.82rem;font-weight:600">${o.username}</div><div style="font-size:.72rem;color:var(--muted)">${o.serviceName.substring(0,30)}...</div></div>
+      <div style="text-align:right"><div style="color:var(--green);font-size:.82rem">₹${o.amount.toFixed(2)}</div><span class="badge badge-${o.status}" style="margin-top:4px">${o.status.toUpperCase()}</span></div>
+    </div>`).join('')||'<p style="color:var(--muted);font-size:.85rem;text-align:center;padding:20px 0">No orders yet</p>';
+}
+
+/* ── API PROVIDERS ── */
+function addProvider(){
+  const name=document.getElementById('provName').value.trim();
+  const url=document.getElementById('provUrl').value.trim();
+  const key=document.getElementById('provKey').value.trim();
+  if(!name||!url){toast('❌ Enter provider name and URL','error');return;}
+  const p={id:'P'+Date.now(),name,url,key,addedOn:new Date().toISOString()};
+  DB.push('providers',p);
+  toast('✅ Provider saved!','success');
+  renderProviders();
+}
+function renderProviders(){
+  const providers=DB.get('providers')||[];
+  const el=document.getElementById('savedProvidersList');
+  if(!el)return;
+  el.innerHTML=providers.length?providers.map(p=>`
+    <div class="api-provider-card">
+      <div style="display:flex;justify-content:space-between;align-items:start;">
+        <div>
+          <div style="font-weight:700;margin-bottom:4px">${p.name}</div>
+          <div style="font-size:.75rem;color:var(--muted);font-family:var(--font-m)">${p.url}</div>
+        </div>
+        <button class="btn btn-danger btn-xs" onclick="deleteProvider('${p.id}')">🗑️</button>
+      </div>
+    </div>`).join(''):'<p style="color:var(--muted);font-size:.85rem;text-align:center;padding:20px 0">No providers added yet</p>';
+}
+function deleteProvider(id){
+  let providers=DB.get('providers')||[];
+  providers=providers.filter(p=>p.id!==id);
+  DB.set('providers',providers);
+  renderProviders();
+  toast('🗑️ Provider removed');
+}
+
+/* Simulated service fetch from API provider */
+const SIMULATED_API_SERVICES=[
+  {id:1001,name:'Instagram Real Followers',category:'Instagram',rate:0.015,min:100,max:50000},
+  {id:1002,name:'Instagram Auto Likes',category:'Instagram',rate:0.006,min:50,max:100000},
+  {id:1003,name:'Instagram Video Views',category:'Instagram',rate:0.002,min:500,max:1000000},
+  {id:1004,name:'Instagram Story Views',category:'Instagram',rate:0.003,min:100,max:100000},
+  {id:1005,name:'Instagram Comments — Random',category:'Instagram',rate:0.08,min:10,max:5000},
+  {id:1006,name:'YouTube Views — High Retention',category:'YouTube',rate:0.02,min:500,max:500000},
+  {id:1007,name:'YouTube Likes — Fast',category:'YouTube',rate:0.01,min:100,max:100000},
+  {id:1008,name:'YouTube Subscribers',category:'YouTube',rate:0.04,min:100,max:20000},
+  {id:1009,name:'YouTube Comments — Custom',category:'YouTube',rate:0.15,min:5,max:1000},
+  {id:1010,name:'Telegram Members',category:'Telegram',rate:0.018,min:100,max:200000},
+  {id:1011,name:'Telegram Post Views',category:'Telegram',rate:0.003,min:1000,max:5000000},
+  {id:1012,name:'TikTok Followers',category:'TikTok',rate:0.016,min:100,max:100000},
+  {id:1013,name:'TikTok Likes',category:'TikTok',rate:0.005,min:100,max:500000},
+  {id:1014,name:'TikTok Views',category:'TikTok',rate:0.002,min:1000,max:10000000},
+  {id:1015,name:'Facebook Page Likes',category:'Facebook',rate:0.025,min:100,max:50000},
+  {id:1016,name:'Twitter/X Followers',category:'Twitter/X',rate:0.03,min:100,max:20000},
+  {id:1017,name:'Twitter/X Likes',category:'Twitter/X',rate:0.008,min:50,max:100000},
+  {id:1018,name:'Spotify Streams',category:'Spotify',rate:0.012,min:1000,max:1000000},
+  {id:1019,name:'LinkedIn Followers',category:'LinkedIn',rate:0.045,min:50,max:5000},
+  {id:1020,name:'Snapchat Followers',category:'Snapchat',rate:0.032,min:100,max:10000},
+];
+
+function fetchProviderServices(){
+  const url=document.getElementById('provUrl').value.trim();
+  const key=document.getElementById('provKey').value.trim();
+  if(!url){toast('❌ Enter API URL first','error');return;}
+  const btn=document.getElementById('fetchBtnText');
+  btn.innerHTML='<span class="spinner"></span> Fetching...';
+  // Simulate API call
+  setTimeout(()=>{
+    btn.textContent='🔄 Fetch Services';
+    fetchedServices=SIMULATED_API_SERVICES.map(s=>({...s,customName:s.name,priceType:'percent',priceVal:30,selected:false}));
+    renderFetchedServices();
+    document.getElementById('fetchedServicesSection').style.display='block';
+    toast(`✅ Fetched ${fetchedServices.length} services from provider!`,'success');
+  },1800);
+}
+function renderFetchedServices(filter=''){
+  const list=document.getElementById('fetchedServicesList');
+  if(!list)return;
+  const filtered=fetchedServices.filter(s=>!filter||s.name.toLowerCase().includes(filter.toLowerCase())||s.category.toLowerCase().includes(filter.toLowerCase()));
+  list.innerHTML=filtered.map((s,i)=>`
+    <div class="service-import-item" id="sii-${s.id}">
+      <input type="checkbox" ${s.selected?'checked':''} onchange="fetchedServices[${fetchedServices.indexOf(s)}].selected=this.checked" style="cursor:pointer;accent-color:var(--glow)"/>
+      <span class="sii-id">#${s.id}</span>
+      <div style="flex:1;min-width:120px">
+        <div style="font-size:.8rem;font-weight:600;margin-bottom:2px">${s.category}</div>
+        <input type="text" class="inline-edit" value="${s.customName}" onchange="fetchedServices[${fetchedServices.indexOf(s)}].customName=this.value" style="font-size:.8rem"/>
+      </div>
+      <span class="sii-rate">₹${(s.rate*1000).toFixed(3)}/1k cost</span>
+      <div class="sii-actions">
+        <div class="price-input-row">
+          <select class="price-type-sel" onchange="fetchedServices[${fetchedServices.indexOf(s)}].priceType=this.value;updateFetchedPrice(${fetchedServices.indexOf(s)},this.closest('.service-import-item'))">
+            <option value="percent" ${s.priceType==='percent'?'selected':''}>% Markup</option>
+            <option value="fixed" ${s.priceType==='fixed'?'selected':''}>Fixed</option>
+            <option value="multiplier" ${s.priceType==='multiplier'?'selected':''}>Multiplier</option>
+          </select>
+          <input type="number" class="price-val-in" value="${s.priceVal}" onchange="fetchedServices[${fetchedServices.indexOf(s)}].priceVal=parseFloat(this.value);updateFetchedPrice(${fetchedServices.indexOf(s)},this.closest('.service-import-item'))"/>
+        </div>
+        <div style="font-size:.72rem;font-family:var(--font-m);color:var(--glow2)">→ ₹${calcFinalRate(s).toFixed(3)}/1k</div>
+      </div>
+    </div>`).join('')||'<p style="color:var(--muted);text-align:center;padding:20px">No results</p>';
+}
+function calcFinalRate(s){
+  const cost=s.rate*1000;
+  if(s.priceType==='percent')return cost*(1+(s.priceVal||0)/100);
+  if(s.priceType==='fixed')return parseFloat(s.priceVal)||cost;
+  if(s.priceType==='multiplier')return cost*(parseFloat(s.priceVal)||1);
+  return cost;
+}
+function updateFetchedPrice(i,container){renderFetchedServices(document.getElementById('fetchFilter')?.value||'');}
+function filterFetched(q){renderFetchedServices(q);}
+function toggleSelectAll(checked){fetchedServices.forEach(s=>s.selected=checked);renderFetchedServices(document.getElementById('fetchFilter')?.value||'');}
+function applyBulkPrice(){
+  const type=document.getElementById('bulkPriceType').value;
+  const val=parseFloat(document.getElementById('bulkPriceVal').value)||0;
+  fetchedServices.forEach(s=>{s.priceType=type;s.priceVal=val;});
+  renderFetchedServices(document.getElementById('fetchFilter')?.value||'');
+  toast('✅ Bulk price applied!','success');
+}
+function importSelected(){
+  const selected=fetchedServices.filter(s=>s.selected);
+  if(!selected.length){toast('❌ Select at least one service','error');return;}
+  const existing=DB.get('services')||[];
+  const newServices=selected.map(s=>({
+    id:'S'+s.id,name:s.customName,category:s.category,
+    rate:parseFloat(calcFinalRate(s).toFixed(3)),
+    min:s.min,max:s.max,enabled:true,desc:'',providerServiceId:s.id
+  }));
+  // Avoid duplicates
+  const updated=[...existing];
+  newServices.forEach(ns=>{
+    if(!updated.find(e=>e.id===ns.id))updated.push(ns);
+    else{const idx=updated.findIndex(e=>e.id===ns.id);updated[idx]={...updated[idx],...ns};}
+  });
+  DB.set('services',updated);
+  toast(`✅ Imported ${newServices.length} services!`,'success');
+  renderManageServices();
+  showAdmin('a-services');
+}
+
+/* ── MANAGE SERVICES ── */
+function renderManageServices(filter=''){
+  let services=DB.get('services')||[];
+  if(filter)services=services.filter(s=>s.name.toLowerCase().includes(filter.toLowerCase())||s.category.toLowerCase().includes(filter.toLowerCase()));
+  const el=document.getElementById('manageServicesList');
+  if(!el)return;
+  el.innerHTML=`
+    <div style="display:grid;grid-template-columns:60px 1fr 110px 100px 90px 90px 90px auto;gap:8px;padding:10px 14px;font-family:var(--font-m);font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);">
+      <div>Enable</div><div>Name</div><div>Category</div><div>Rate/1k</div><div>Min</div><div>Max</div><div>Status</div><div>Save</div>
+    </div>
+    ${services.map(s=>`
+    <div class="manage-service-row" id="msr-${s.id}">
+      <label class="toggle-switch">
+        <input type="checkbox" ${s.enabled?'checked':''} onchange="toggleService('${s.id}',this.checked)"/>
+        <span class="toggle-slider"></span>
+      </label>
+      <input type="text" class="inline-edit" value="${s.name}" id="sname-${s.id}"/>
+      <input type="text" class="inline-edit" value="${s.category}" id="scat-${s.id}"/>
+      <input type="number" class="inline-edit" value="${s.rate}" id="srate-${s.id}" style="width:90px"/>
+      <input type="number" class="inline-edit" value="${s.min}" id="smin-${s.id}" style="width:80px"/>
+      <input type="number" class="inline-edit" value="${s.max}" id="smax-${s.id}" style="width:80px"/>
+      <span class="badge badge-${s.enabled?'active':'inactive'}">${s.enabled?'Active':'Off'}</span>
+      <div style="display:flex;gap:6px">
+        <button class="btn btn-success btn-xs" onclick="saveService('${s.id}')">💾</button>
+        <button class="btn btn-danger btn-xs" onclick="deleteService('${s.id}')">🗑️</button>
+      </div>
+    </div>`).join('')}
+    ${!services.length?'<p style="color:var(--muted);text-align:center;padding:32px">No services. Add via API Providers or manually.</p>':''}
+  `;
+}
+function filterManageServices(q){renderManageServices(q);}
+function toggleService(id,enabled){
+  let services=DB.get('services')||[];
+  const idx=services.findIndex(s=>s.id===id);
+  if(idx>-1){services[idx].enabled=enabled;DB.set('services',services);}
+}
+function saveService(id){
+  let services=DB.get('services')||[];
+  const idx=services.findIndex(s=>s.id===id);
+  if(idx>-1){
+    services[idx].name=document.getElementById('sname-'+id)?.value||services[idx].name;
+    services[idx].category=document.getElementById('scat-'+id)?.value||services[idx].category;
+    services[idx].rate=parseFloat(document.getElementById('srate-'+id)?.value)||services[idx].rate;
+    services[idx].min=parseInt(document.getElementById('smin-'+id)?.value)||services[idx].min;
+    services[idx].max=parseInt(document.getElementById('smax-'+id)?.value)||services[idx].max;
+    DB.set('services',services);
+    toast('✅ Service saved!','success');
+    renderManageServices();
+  }
+}
+function deleteService(id){
+  if(!confirm('Delete this service?'))return;
+  let services=DB.get('services')||[];
+  DB.set('services',services.filter(s=>s.id!==id));
+  toast('🗑️ Service deleted');
+  renderManageServices();
+}
+function openAddServiceModal(){
+  document.getElementById('modalContent').innerHTML=`
+    <div class="modal-title">➕ Add New Service</div>
+    <div class="form-group"><label class="form-label">Service Name</label><input type="text" class="form-input" id="msName" placeholder="e.g. Instagram Followers"/></div>
+    <div class="form-group"><label class="form-label">Category</label><input type="text" class="form-input" id="msCat" placeholder="e.g. Instagram"/></div>
+    <div class="form-group"><label class="form-label">Rate per 1000 (₹)</label><input type="number" class="form-input" id="msRate" placeholder="e.g. 15"/></div>
+    <div class="form-group"><label class="form-label">Min Order</label><input type="number" class="form-input" id="msMin" placeholder="100"/></div>
+    <div class="form-group"><label class="form-label">Max Order</label><input type="number" class="form-input" id="msMax" placeholder="50000"/></div>
+    <div class="form-group"><label class="form-label">Description (optional)</label><input type="text" class="form-input" id="msDesc" placeholder="Short description"/></div>
+    <button class="btn btn-primary btn-full" onclick="addManualService()">➕ Add Service</button>
+  `;
+  openModal();
+}
+function addManualService(){
+  const name=document.getElementById('msName')?.value.trim();
+  const cat=document.getElementById('msCat')?.value.trim();
+  const rate=parseFloat(document.getElementById('msRate')?.value)||0;
+  const min=parseInt(document.getElementById('msMin')?.value)||100;
+  const max=parseInt(document.getElementById('msMax')?.value)||50000;
+  const desc=document.getElementById('msDesc')?.value.trim();
+  if(!name||!cat||!rate){toast('❌ Fill name, category, rate','error');return;}
+  const newS={id:'SM'+Date.now(),name,category:cat,rate,min,max,desc,enabled:true};
+  DB.push('services',newS);
+  closeModal();
+  toast('✅ Service added!','success');
+  renderManageServices();
+}
+
+/* ── ADMIN ORDERS ── */
+function renderAdminOrders(){
+  const filterStatus=document.getElementById('orderFilterStatus')?.value||'';
+  let orders=DB.get('orders')||[];
+  if(filterStatus)orders=orders.filter(o=>o.status===filterStatus);
+  orders=orders.reverse();
+  document.getElementById('adminOrdersTbody').innerHTML=orders.length?orders.map(o=>`
+    <tr>
+      <td class="td-mono" style="font-size:.7rem;color:var(--muted)">${o.id}</td>
+      <td style="font-size:.82rem;font-weight:600">${o.username}</td>
+      <td style="font-size:.78rem;max-width:150px">${o.serviceName.substring(0,25)}...</td>
+      <td style="font-size:.72rem;max-width:100px;overflow:hidden;text-overflow:ellipsis"><a href="${o.link}" target="_blank" style="color:var(--glow2)">${o.link.substring(0,20)}...</a></td>
+      <td class="td-mono">${o.qty.toLocaleString()}</td>
+      <td class="td-mono" style="color:var(--green)">₹${o.amount.toFixed(2)}</td>
+      <td>
+        <select class="price-type-sel" onchange="updateOrderStatus('${o.id}',this.value)">
+          <option value="pending" ${o.status==='pending'?'selected':''}>⏳ Pending</option>
+          <option value="processing" ${o.status==='processing'?'selected':''}>🔄 Processing</option>
+          <option value="completed" ${o.status==='completed'?'selected':''}>✅ Completed</option>
+          <option value="cancelled" ${o.status==='cancelled'?'selected':''}>❌ Cancelled</option>
+        </select>
+      </td>
+      <td class="td-mono" style="font-size:.7rem;color:var(--muted)">${new Date(o.date).toLocaleDateString()}</td>
+      <td>
+        ${o.status==='pending'?`<button class="btn btn-success btn-xs" onclick="updateOrderStatus('${o.id}','completed')">✅ Done</button>`:''}
+        ${o.status!=='cancelled'?`<button class="btn btn-danger btn-xs" onclick="updateOrderStatus('${o.id}','cancelled');refundOrder('${o.id}')">❌ Refund</button>`:''}
+      </td>
+    </tr>`).join(''):'<tr><td colspan="9" style="text-align:center;color:var(--muted);padding:32px">No orders found</td></tr>';
+}
+function updateOrderStatus(id,status){
+  let orders=DB.get('orders')||[];
+  const idx=orders.findIndex(o=>o.id===id);
+  if(idx>-1){orders[idx].status=status;DB.set('orders',orders);toast('✅ Order status updated','success');renderAdminOrders();}
+}
+function refundOrder(id){
+  const orders=DB.get('orders')||[];
+  const order=orders.find(o=>o.id===id);
+  if(!order||order.refunded)return;
+  let users=DB.get('users')||[];
+  const idx=users.findIndex(u=>u.id===order.userId);
+  if(idx>-1){
+    users[idx].balance=parseFloat((users[idx].balance+order.amount).toFixed(2));
+    DB.set('users',users);
+    orders.find(o=>o.id===id).refunded=true;
+    DB.set('orders',orders);
+    DB.push('txns',{id:'T'+Date.now(),userId:order.userId,type:'refund',amount:order.amount,desc:'Refund: '+order.serviceName,status:'completed',date:new Date().toISOString()});
+    toast('💰 Order refunded to user balance','success');
+  }
+}
+
+/* ── ADMIN DEPOSITS ── */
+let adminDepTab='pending';
+function switchDepTab(tab,el){
+  adminDepTab=tab;
+  document.querySelectorAll('.admin-tab-btn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  renderAdminDeposits();
+}
+function renderAdminDeposits(){
+  const deps=(DB.get('deposits')||[]).filter(d=>d.status===adminDepTab).reverse();
+  document.getElementById('adminDepTbody').innerHTML=deps.length?deps.map(d=>`
+    <tr>
+      <td class="td-mono" style="font-size:.7rem;color:var(--muted)">${d.id}</td>
+      <td style="font-weight:600">${d.username}</td>
+      <td class="td-mono" style="color:var(--green)">₹${d.amount}</td>
+      <td style="font-size:.82rem">${d.method}</td>
+      <td class="td-mono" style="font-size:.75rem">${d.txnId}</td>
+      <td style="font-size:.78rem;color:var(--muted)">${d.note||'—'}</td>
+      <td class="td-mono" style="font-size:.7rem;color:var(--muted)">${new Date(d.date).toLocaleDateString()}</td>
+      <td>
+        ${d.status==='pending'?`
+          <div style="display:flex;gap:6px">
+            <button class="btn btn-success btn-xs" onclick="approveDeposit('${d.id}')">✅ Approve</button>
+            <button class="btn btn-danger btn-xs" onclick="rejectDeposit('${d.id}')">❌ Reject</button>
+          </div>`:`<span class="badge badge-${d.status}">${d.status.toUpperCase()}</span>`}
+      </td>
+    </tr>`).join(''):`<tr><td colspan="8" style="text-align:center;color:var(--muted);padding:32px">No ${adminDepTab} deposits</td></tr>`;
+  // Update badge
+  const pending=(DB.get('deposits')||[]).filter(d=>d.status==='pending').length;
+  const badge=document.getElementById('adminDepBadge');
+  if(badge){badge.style.display=pending?'inline':'none';badge.textContent=pending;}
+}
+function approveDeposit(id){
+  let deposits=DB.get('deposits')||[];
+  const idx=deposits.findIndex(d=>d.id===id);
+  if(idx<0)return;
+  const dep=deposits[idx];
+  // Credit user balance
+  let users=DB.get('users')||[];
+  const uidx=users.findIndex(u=>u.id===dep.userId);
+  if(uidx>-1){
+    users[uidx].balance=parseFloat((users[uidx].balance+dep.amount).toFixed(2));
+    DB.set('users',users);
+  }
+  deposits[idx].status='approved';
+  deposits[idx].approvedOn=new Date().toISOString();
+  DB.set('deposits',deposits);
+  DB.push('txns',{id:'T'+Date.now(),userId:dep.userId,type:'credit',amount:dep.amount,desc:'Deposit approved',status:'completed',date:new Date().toISOString()});
+  toast(`✅ ₹${dep.amount} approved for ${dep.username}!`,'success');
+  renderAdminDeposits();
+  renderAdminOverview();
+}
+function rejectDeposit(id){
+  let deposits=DB.get('deposits')||[];
+  const idx=deposits.findIndex(d=>d.id===id);
+  if(idx<0)return;
+  deposits[idx].status='rejected';
+  DB.set('deposits',deposits);
+  toast('❌ Deposit rejected','error');
+  renderAdminDeposits();
+}
+
+/* ── ADMIN USERS ── */
+function renderAdminUsers(){
+  const users=DB.get('users')||[];
+  const orders=DB.get('orders')||[];
+  document.getElementById('adminUsersTbody').innerHTML=users.length?users.map(u=>`
+    <tr>
+      <td style="font-weight:600">${u.username}</td>
+      <td style="font-size:.82rem;color:var(--muted)">${u.email}</td>
+      <td class="td-mono" style="color:var(--green)">₹${(u.balance||0).toFixed(2)}</td>
+      <td class="td-mono">${orders.filter(o=>o.userId===u.id).length}</td>
+      <td class="td-mono" style="font-size:.72rem;color:var(--muted)">${new Date(u.joined).toLocaleDateString()}</td>
+      <td>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <button class="btn btn-success btn-xs" onclick="openAddBalance('${u.id}','${u.username}')">➕ Balance</button>
+          <button class="btn btn-warn btn-xs" onclick="openDeductBalance('${u.id}','${u.username}')">➖ Deduct</button>
+          <button class="btn btn-danger btn-xs" onclick="deleteUser('${u.id}')">🗑️</button>
+        </div>
+      </td>
+    </tr>`).join(''):'<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:32px">No users registered yet</td></tr>';
+}
+function openAddBalance(uid,uname){
+  document.getElementById('modalContent').innerHTML=`
+    <div class="modal-title">➕ Add Balance — ${uname}</div>
+    <div class="form-group"><label class="form-label">Amount (₹)</label><input type="number" class="form-input" id="addBalAmt" placeholder="Enter amount"/></div>
+    <div class="form-group"><label class="form-label">Note</label><input type="text" class="form-input" id="addBalNote" placeholder="e.g. Manual credit, bonus"/></div>
+    <button class="btn btn-primary btn-full" onclick="doAddBalance('${uid}')">✅ Add Balance</button>
+  `;openModal();
+}
+function openDeductBalance(uid,uname){
+  document.getElementById('modalContent').innerHTML=`
+    <div class="modal-title">➖ Deduct Balance — ${uname}</div>
+    <div class="form-group"><label class="form-label">Amount (₹)</label><input type="number" class="form-input" id="addBalAmt" placeholder="Enter amount"/></div>
+    <div class="form-group"><label class="form-label">Reason</label><input type="text" class="form-input" id="addBalNote" placeholder="Reason for deduction"/></div>
+    <button class="btn btn-danger btn-full" onclick="doAddBalance('${uid}',-1)">➖ Deduct Balance</button>
+  `;openModal();
+}
+function doAddBalance(uid,mult=1){
+  const amt=parseFloat(document.getElementById('addBalAmt')?.value)||0;
+  const note=document.getElementById('addBalNote')?.value||'Admin credit';
+  if(!amt){toast('❌ Enter an amount','error');return;}
+  let users=DB.get('users')||[];
+  const idx=users.findIndex(u=>u.id===uid);
+  if(idx>-1){
+    users[idx].balance=parseFloat((users[idx].balance+(amt*mult)).toFixed(2));
+    if(users[idx].balance<0)users[idx].balance=0;
+    DB.set('users',users);
+    DB.push('txns',{id:'T'+Date.now(),userId:uid,type:mult>0?'credit':'deduct',amount:amt*mult,desc:note,status:'completed',date:new Date().toISOString()});
+    closeModal();
+    toast(`✅ Balance updated for user`,'success');
+    renderAdminUsers();
+  }
+}
+function deleteUser(uid){
+  if(!confirm('Delete this user? This cannot be undone!'))return;
+  let users=DB.get('users')||[];
+  DB.set('users',users.filter(u=>u.id!==uid));
+  toast('🗑️ User deleted');
+  renderAdminUsers();
+}
+
+/* ── SETTINGS ── */
+function loadSettings(){
+  const s=DB.get('settings')||{};
+  const set=(id,val)=>{const el=document.getElementById(id);if(el&&val!==undefined)el.value=val;};
+  set('sUpi1',s.upi1);set('sUpi2',s.upi2);
+  set('sBankName',s.bankName);set('sBankAcc',s.bankAcc);
+  set('sBankIfsc',s.bankIfsc);set('sBankHolder',s.bankHolder);
+  set('sPanelName',s.panelName);set('sPanelUrl',s.panelUrl);
+  set('sMinDeposit',s.minDeposit);set('sWelcomeBonus',s.welcomeBonus);
+  set('sSupport',s.support);
+}
+function saveSettings(){
+  const get=(id)=>document.getElementById(id)?.value||'';
+  DB.set('settings',{
+    upi1:get('sUpi1'),upi2:get('sUpi2'),
+    bankName:get('sBankName'),bankAcc:get('sBankAcc'),
+    bankIfsc:get('sBankIfsc'),bankHolder:get('sBankHolder'),
+    panelName:get('sPanelName'),panelUrl:get('sPanelUrl'),
+    minDeposit:parseFloat(get('sMinDeposit'))||50,
+    welcomeBonus:parseFloat(get('sWelcomeBonus'))||0,
+    support:get('sSupport')
+  });
+  toast('✅ Settings saved!','success');
+}
+
+/* ── MODAL ── */
+function openModal(){document.getElementById('globalModal').classList.add('open');}
+function closeModal(){document.getElementById('globalModal').classList.remove('open');}
+document.getElementById('globalModal').addEventListener('click',e=>{if(e.target.id==='globalModal')closeModal();});
+
+/* ── HASH ROUTER for /admin ── */
+function checkRoute(){
+  const hash=window.location.hash;
+  if(hash==='#admin'||hash==='/admin'||window.location.pathname.includes('/admin')){
+    showView('admin-login');
+  }
+}
+
+/* ══════════════════════════════════════
+   INIT
+══════════════════════════════════════ */
+window.addEventListener('load',()=>{
+  seedDefaults();
+  checkRoute();
+  if(!window.location.hash.includes('admin')){
+    showView('landing');
+    renderLanding();
+  }
+});
+window.addEventListener('hashchange',checkRoute);
+// Enter key support for auth forms
+document.getElementById('loginPass')?.addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
+document.getElementById('signupPass')?.addEventListener('keydown',e=>{if(e.key==='Enter')doSignup();});
+document.getElementById('adminPass')?.addEventListener('keydown',e=>{if(e.key==='Enter')doAdminLogin();});
+</script>
+</body>
+</html>

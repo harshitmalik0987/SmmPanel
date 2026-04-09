@@ -1,0 +1,1806 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>My SocialPanel 🚀 - #1 SMM Panel</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Exo+2:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+:root{
+  --bg:#000000;--bg2:#05050a;--bg3:#0a0a14;
+  --purple:#8B5CF6;--purple-d:#6D28D9;--purple-l:#A78BFA;
+  --cyan:#06B6D4;--cyan-d:#0891B2;--cyan-l:#67E8F9;
+  --text:#E2E8F0;--muted:#94A3B8;--border:rgba(139,92,246,0.25);
+  --card:rgba(8,8,16,0.85);--success:#10B981;--error:#EF4444;--warn:#F59E0B;
+  --glow-p:0 0 20px rgba(139,92,246,0.4);--glow-c:0 0 20px rgba(6,182,212,0.4);
+}
+html,body{height:100%;font-family:'Exo 2',sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden;cursor:none;}
+a{color:var(--cyan-l);text-decoration:none;}
+button{cursor:none;font-family:'Exo 2',sans-serif;}
+input,select,textarea{font-family:'Exo 2',sans-serif;}
+::-webkit-scrollbar{width:4px;}
+::-webkit-scrollbar-track{background:#0a0a14;}
+::-webkit-scrollbar-thumb{background:var(--purple);border-radius:2px;}
+
+/* CURSOR */
+#cursor{position:fixed;width:20px;height:20px;background:var(--cyan);border-radius:50%;pointer-events:none;z-index:99999;transform:translate(-50%,-50%);transition:width .15s,height .15s,background .15s;mix-blend-mode:screen;box-shadow:0 0 15px var(--cyan),0 0 30px rgba(6,182,212,0.5);}
+#cursorRing{position:fixed;width:40px;height:40px;border:1.5px solid var(--purple-l);border-radius:50%;pointer-events:none;z-index:99998;transform:translate(-50%,-50%);transition:transform .1s;opacity:.7;}
+body.clicking #cursor{width:12px;height:12px;background:var(--purple-l);}
+
+/* CANVAS */
+#particleCanvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;}
+
+/* ORBS */
+#orbs{position:fixed;inset:0;z-index:1;pointer-events:none;overflow:hidden;}
+.orb{position:absolute;border-radius:50%;filter:blur(80px);opacity:.15;}
+.orb1{width:500px;height:500px;background:radial-gradient(circle,var(--purple),transparent);top:-100px;left:-100px;animation:drift1 18s ease-in-out infinite;}
+.orb2{width:400px;height:400px;background:radial-gradient(circle,var(--cyan),transparent);bottom:-80px;right:-80px;animation:drift2 22s ease-in-out infinite;}
+.orb3{width:350px;height:350px;background:radial-gradient(circle,#EC4899,transparent);top:40%;left:60%;animation:drift3 26s ease-in-out infinite;}
+@keyframes drift1{0%,100%{transform:translate(0,0);}33%{transform:translate(80px,60px);}66%{transform:translate(-40px,100px);}}
+@keyframes drift2{0%,100%{transform:translate(0,0);}33%{transform:translate(-70px,-50px);}66%{transform:translate(40px,-90px);}}
+@keyframes drift3{0%,100%{transform:translate(0,0);}50%{transform:translate(-120px,60px);}}
+
+/* GRAIN */
+#grain{position:fixed;inset:0;z-index:2;pointer-events:none;opacity:.035;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");background-size:200px 200px;}
+
+/* MAIN LAYOUT */
+#app{position:relative;z-index:10;min-height:100vh;}
+.page{display:none;min-height:100vh;}
+.page.active{display:block;}
+
+/* NAV */
+#navbar{position:fixed;top:0;left:0;right:0;z-index:100;padding:12px 20px;display:flex;align-items:center;justify-content:space-between;background:rgba(0,0,0,0.7);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);}
+.nav-logo{font-family:'Orbitron',monospace;font-size:clamp(14px,3.5vw,20px);font-weight:900;background:linear-gradient(135deg,var(--purple-l),var(--cyan-l));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;white-space:nowrap;}
+.nav-links{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+.nav-btn{padding:7px 14px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--text);font-size:13px;font-weight:500;transition:.2s;}
+.nav-btn:hover{background:rgba(139,92,246,0.15);border-color:var(--purple);}
+.nav-btn.primary{background:linear-gradient(135deg,var(--purple-d),var(--cyan-d));border-color:transparent;color:#fff;}
+.nav-btn.primary:hover{opacity:.9;box-shadow:var(--glow-p);}
+.nav-user{display:flex;align-items:center;gap:8px;}
+.user-bal{background:rgba(6,182,212,0.1);border:1px solid rgba(6,182,212,0.3);padding:5px 10px;border-radius:20px;font-size:12px;color:var(--cyan-l);font-weight:600;}
+.hamburger{display:none;flex-direction:column;gap:4px;background:none;border:none;padding:4px;}
+.hamburger span{width:22px;height:2px;background:var(--text);border-radius:2px;display:block;transition:.3s;}
+@media(max-width:640px){.hamburger{display:flex;}.nav-desktop{display:none;}.nav-links{display:none;}.nav-mobile-menu{position:fixed;top:56px;left:0;right:0;background:rgba(5,5,15,0.98);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:16px;display:flex;flex-direction:column;gap:8px;z-index:99;transform:translateY(-110%);transition:transform .3s;}.nav-mobile-menu.open{transform:translateY(0);}.nav-mobile-menu .nav-btn{width:100%;text-align:left;padding:12px 16px;font-size:15px;}}
+
+/* HERO / LANDING */
+.hero{padding:120px 20px 80px;text-align:center;max-width:900px;margin:0 auto;}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(139,92,246,0.1);border:1px solid rgba(139,92,246,0.3);padding:6px 16px;border-radius:20px;font-size:12px;color:var(--purple-l);margin-bottom:24px;animation:fadeDown .6s ease;}
+.hero h1{font-family:'Orbitron',monospace;font-size:clamp(28px,7vw,72px);font-weight:900;line-height:1.1;margin-bottom:20px;animation:fadeDown .7s ease;}
+.hero h1 .grad{background:linear-gradient(135deg,var(--purple-l),var(--cyan-l));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.hero p{font-size:clamp(14px,3vw,18px);color:var(--muted);max-width:600px;margin:0 auto 36px;line-height:1.7;animation:fadeDown .8s ease;}
+.hero-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;animation:fadeDown .9s ease;}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:12px 24px;border-radius:10px;font-size:14px;font-weight:600;border:none;transition:.2s;white-space:nowrap;}
+.btn-primary{background:linear-gradient(135deg,var(--purple-d),var(--cyan-d));color:#fff;box-shadow:0 4px 20px rgba(139,92,246,0.3);}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(139,92,246,0.5);}
+.btn-outline{background:transparent;color:var(--text);border:1px solid var(--border);}
+.btn-outline:hover{border-color:var(--cyan);color:var(--cyan-l);box-shadow:var(--glow-c);}
+
+/* STATS */
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:16px;max-width:900px;margin:0 auto 60px;padding:0 20px;}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:24px;text-align:center;backdrop-filter:blur(10px);transition:.3s;}
+.stat-card:hover{border-color:var(--purple);box-shadow:var(--glow-p);transform:translateY(-4px);}
+.stat-num{font-family:'Orbitron',monospace;font-size:clamp(20px,4vw,32px);font-weight:700;background:linear-gradient(135deg,var(--purple-l),var(--cyan-l));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.stat-label{color:var(--muted);font-size:12px;margin-top:4px;}
+
+/* FEATURES */
+.features{max-width:900px;margin:0 auto 60px;padding:0 20px;}
+.section-title{font-family:'Orbitron',monospace;font-size:clamp(18px,4vw,28px);font-weight:700;text-align:center;margin-bottom:32px;background:linear-gradient(135deg,var(--purple-l),var(--cyan-l));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.features-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;}
+.feature-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:24px;backdrop-filter:blur(10px);transition:.3s;}
+.feature-card:hover{border-color:var(--cyan);box-shadow:var(--glow-c);transform:translateY(-3px);}
+.feature-icon{font-size:28px;margin-bottom:12px;}
+.feature-card h3{font-size:15px;font-weight:600;margin-bottom:6px;}
+.feature-card p{font-size:13px;color:var(--muted);line-height:1.6;}
+
+/* AUTH PAGES */
+.auth-page{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:80px 16px 40px;}
+.auth-box{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:clamp(24px,5vw,40px);width:100%;max-width:420px;backdrop-filter:blur(20px);box-shadow:0 20px 60px rgba(0,0,0,0.5);}
+.auth-box h2{font-family:'Orbitron',monospace;font-size:clamp(18px,4vw,24px);font-weight:700;margin-bottom:6px;background:linear-gradient(135deg,var(--purple-l),var(--cyan-l));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.auth-box .sub{color:var(--muted);font-size:13px;margin-bottom:28px;}
+.form-group{margin-bottom:16px;}
+.form-group label{display:block;font-size:12px;font-weight:600;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px;}
+.form-group label span{color:var(--purple-l);}
+.form-input{width:100%;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:10px;padding:12px 14px;color:var(--text);font-size:14px;transition:.2s;outline:none;}
+.form-input:focus{border-color:var(--purple);box-shadow:0 0 0 3px rgba(139,92,246,0.15);}
+.form-input.error-field{border-color:var(--error);}
+.form-input.success-field{border-color:var(--success);}
+.field-error{font-size:11px;color:var(--error);margin-top:4px;display:flex;align-items:center;gap:4px;}
+.field-success{font-size:11px;color:var(--success);margin-top:4px;}
+.pw-strength{height:3px;border-radius:2px;background:#1a1a2e;margin-top:6px;overflow:hidden;}
+.pw-bar{height:100%;border-radius:2px;transition:width .3s,background .3s;}
+.pw-hint{font-size:11px;color:var(--muted);margin-top:4px;}
+.btn-full{width:100%;justify-content:center;padding:14px;font-size:15px;border-radius:10px;}
+.auth-switch{text-align:center;margin-top:20px;font-size:13px;color:var(--muted);}
+.auth-switch a{color:var(--purple-l);font-weight:600;}
+
+/* DASHBOARD LAYOUT */
+.dash-layout{display:flex;min-height:100vh;padding-top:60px;}
+.sidebar{width:240px;background:rgba(5,5,12,0.9);border-right:1px solid var(--border);padding:20px 0;position:fixed;top:60px;left:0;bottom:0;overflow-y:auto;z-index:50;backdrop-filter:blur(10px);}
+.sidebar-user{padding:16px 20px;border-bottom:1px solid var(--border);margin-bottom:8px;}
+.sidebar-avatar{width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,var(--purple-d),var(--cyan-d));display:flex;align-items:center;justify-content:center;font-size:18px;margin-bottom:8px;}
+.sidebar-name{font-weight:600;font-size:14px;}
+.sidebar-bal{font-size:12px;color:var(--cyan-l);font-weight:600;}
+.sidebar-nav{padding:0 10px;}
+.nav-item{display:flex;align-items:center;gap:10px;padding:11px 14px;border-radius:10px;color:var(--muted);font-size:13px;font-weight:500;cursor:none;transition:.2s;margin-bottom:2px;border:none;background:none;width:100%;text-align:left;}
+.nav-item:hover{background:rgba(139,92,246,0.1);color:var(--text);}
+.nav-item.active{background:rgba(139,92,246,0.2);color:var(--purple-l);border-left:2px solid var(--purple);}
+.nav-item i{width:16px;text-align:center;}
+.dash-content{flex:1;margin-left:240px;padding:24px;min-height:calc(100vh - 60px);}
+@media(max-width:768px){.sidebar{transform:translateX(-100%);transition:.3s;}.sidebar.open{transform:translateX(0);}.dash-content{margin-left:0;padding:16px;}.sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:49;}.sidebar-overlay.active{display:block;}}
+
+/* BOTTOM NAV (mobile) */
+.bottom-nav{display:none;position:fixed;bottom:0;left:0;right:0;z-index:80;background:rgba(5,5,15,0.95);border-top:1px solid var(--border);backdrop-filter:blur(20px);padding:8px 0 env(safe-area-inset-bottom,0);}
+@media(max-width:768px){.bottom-nav{display:flex;}.dash-content{padding-bottom:80px;}}
+.bn-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px;color:var(--muted);font-size:10px;font-weight:500;border:none;background:none;cursor:none;transition:.2s;}
+.bn-item.active{color:var(--purple-l);}
+.bn-item i{font-size:18px;}
+
+/* CARDS */
+.card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px;backdrop-filter:blur(10px);}
+.card-title{font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;}
+.card-val{font-family:'Orbitron',monospace;font-size:clamp(18px,3vw,26px);font-weight:700;}
+.card-val.purple{color:var(--purple-l);}
+.card-val.cyan{color:var(--cyan-l);}
+.card-val.green{color:var(--success);}
+.card-val.yellow{color:var(--warn);}
+.stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin-bottom:24px;}
+
+/* TABLE */
+.table-wrap{overflow-x:auto;border-radius:12px;border:1px solid var(--border);}
+table{width:100%;border-collapse:collapse;font-size:13px;}
+th{background:rgba(139,92,246,0.1);padding:12px 14px;text-align:left;font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;white-space:nowrap;}
+td{padding:12px 14px;border-top:1px solid var(--border);vertical-align:middle;}
+tr:hover td{background:rgba(139,92,246,0.05);}
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;white-space:nowrap;}
+.badge.pending{background:rgba(245,158,11,0.15);color:var(--warn);border:1px solid rgba(245,158,11,0.3);}
+.badge.processing{background:rgba(6,182,212,0.15);color:var(--cyan-l);border:1px solid rgba(6,182,212,0.3);}
+.badge.completed{background:rgba(16,185,129,0.15);color:var(--success);border:1px solid rgba(16,185,129,0.3);}
+.badge.cancelled{background:rgba(239,68,68,0.15);color:var(--error);border:1px solid rgba(239,68,68,0.3);}
+.badge.active{background:rgba(16,185,129,0.15);color:var(--success);border:1px solid rgba(16,185,129,0.3);}
+.badge.partial{background:rgba(139,92,246,0.15);color:var(--purple-l);border:1px solid rgba(139,92,246,0.3);}
+
+/* FORM ELEMENTS */
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+@media(max-width:480px){.form-row{grid-template-columns:1fr;}}
+.input-icon{position:relative;}
+.input-icon i{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:14px;}
+.input-icon .form-input{padding-left:36px;}
+.select-input{width:100%;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:10px;padding:12px 14px;color:var(--text);font-size:14px;outline:none;appearance:none;cursor:none;}
+.select-input:focus{border-color:var(--purple);}
+.select-input option{background:#0a0a14;color:var(--text);}
+
+/* SERVICE CARDS */
+.services-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;}
+.service-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px;transition:.3s;cursor:none;}
+.service-card:hover{border-color:var(--purple);transform:translateY(-2px);box-shadow:var(--glow-p);}
+.sc-platform{display:flex;align-items:center;gap:8px;margin-bottom:12px;}
+.sc-icon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;}
+.sc-cat{font-size:11px;color:var(--muted);font-weight:500;}
+.sc-name{font-size:14px;font-weight:600;margin-bottom:8px;line-height:1.4;}
+.sc-meta{display:flex;justify-content:space-between;align-items:center;margin-top:12px;}
+.sc-price{font-family:'Orbitron',monospace;font-size:13px;color:var(--cyan-l);font-weight:700;}
+.sc-range{font-size:11px;color:var(--muted);}
+.btn-sm{padding:7px 14px;font-size:12px;border-radius:8px;border:none;font-weight:600;transition:.2s;}
+.btn-purple{background:linear-gradient(135deg,var(--purple-d),var(--purple));color:#fff;}
+.btn-cyan{background:linear-gradient(135deg,var(--cyan-d),var(--cyan));color:#fff;}
+.btn-green{background:linear-gradient(135deg,#059669,#10B981);color:#fff;}
+.btn-red{background:linear-gradient(135deg,#DC2626,#EF4444);color:#fff;}
+.btn-yellow{background:linear-gradient(135deg,#D97706,#F59E0B);color:#fff;}
+.btn-ghost{background:rgba(255,255,255,0.06);color:var(--text);border:1px solid var(--border);}
+.btn-sm:hover{opacity:.85;transform:scale(.97);}
+
+/* CATEGORY TABS */
+.cat-tabs{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;margin-bottom:20px;scrollbar-width:none;}
+.cat-tabs::-webkit-scrollbar{display:none;}
+.cat-tab{padding:8px 16px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--muted);font-size:13px;font-weight:500;white-space:nowrap;cursor:none;transition:.2s;}
+.cat-tab.active{background:rgba(139,92,246,0.2);border-color:var(--purple);color:var(--purple-l);}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.8);backdrop-filter:blur(6px);z-index:200;display:none;align-items:center;justify-content:center;padding:20px;}
+.modal-overlay.show{display:flex;}
+.modal-box{background:#08080f;border:1px solid var(--border);border-radius:20px;padding:28px;width:100%;max-width:480px;max-height:85vh;overflow-y:auto;position:relative;box-shadow:0 20px 60px rgba(0,0,0,0.8);}
+.modal-close{position:absolute;top:16px;right:16px;background:rgba(255,255,255,0.08);border:none;color:var(--text);width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:none;}
+.modal-title{font-family:'Orbitron',monospace;font-size:16px;font-weight:700;margin-bottom:20px;color:var(--purple-l);}
+
+/* TOAST */
+#toastContainer{position:fixed;top:80px;right:16px;z-index:9999;display:flex;flex-direction:column;gap:8px;max-width:320px;}
+.toast{background:#0d0d1a;border:1px solid var(--border);border-radius:12px;padding:12px 16px;font-size:13px;backdrop-filter:blur(20px);animation:toastIn .3s ease;display:flex;align-items:center;gap:10px;box-shadow:0 8px 30px rgba(0,0,0,0.5);}
+.toast.success{border-color:var(--success);}
+.toast.error{border-color:var(--error);}
+.toast.info{border-color:var(--cyan);}
+@keyframes toastIn{from{transform:translateX(100%);opacity:0;}to{transform:translateX(0);opacity:1;}}
+@keyframes toastOut{from{transform:translateX(0);opacity:1;}to{transform:translateX(110%);opacity:0;}}
+@keyframes fadeDown{from{opacity:0;transform:translateY(-20px);}to{opacity:1;transform:translateY(0);}}
+
+/* ADMIN STYLES */
+.admin-layout{display:flex;min-height:100vh;}
+.admin-sidebar{width:250px;background:#03030a;border-right:1px solid var(--border);padding:20px 0;position:fixed;top:0;left:0;bottom:0;overflow-y:auto;z-index:50;}
+.admin-logo{padding:20px 20px 16px;border-bottom:1px solid var(--border);margin-bottom:12px;}
+.admin-logo span{font-family:'Orbitron',monospace;font-size:15px;font-weight:800;background:linear-gradient(135deg,var(--purple-l),var(--cyan-l));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.admin-logo small{display:block;font-size:10px;color:var(--muted);margin-top:2px;}
+.admin-content{flex:1;margin-left:250px;padding:24px;background:var(--bg2);}
+@media(max-width:768px){.admin-sidebar{transform:translateX(-100%);transition:.3s;z-index:200;}.admin-sidebar.open{transform:translateX(0);}.admin-content{margin-left:0;padding:16px;}}
+.admin-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px;}
+.admin-title{font-family:'Orbitron',monospace;font-size:clamp(16px,3vw,22px);font-weight:700;color:var(--purple-l);}
+.admin-login{min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--bg);padding:20px;}
+
+/* DEPOSIT */
+.dep-method{border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:12px;cursor:none;transition:.2s;}
+.dep-method:hover,.dep-method.sel{border-color:var(--purple);background:rgba(139,92,246,0.08);}
+.dep-method.sel .dep-check{background:var(--purple);border-color:var(--purple);}
+.dep-check{width:18px;height:18px;border:2px solid var(--border);border-radius:50%;display:inline-flex;align-items:center;justify-content:center;transition:.2s;}
+.dep-check::after{content:'';width:8px;height:8px;border-radius:50%;background:#fff;display:none;}
+.dep-method.sel .dep-check::after{display:block;}
+
+/* ORDER FORM */
+.order-form{max-width:600px;}
+.price-preview{background:rgba(6,182,212,0.06);border:1px solid rgba(6,182,212,0.2);border-radius:12px;padding:16px;margin:12px 0;}
+.price-row{display:flex;justify-content:space-between;margin-bottom:6px;font-size:13px;}
+.price-total{font-family:'Orbitron',monospace;font-size:18px;font-weight:700;color:var(--cyan-l);}
+.service-info{background:rgba(139,92,246,0.06);border:1px solid rgba(139,92,246,0.2);border-radius:12px;padding:14px;margin-bottom:14px;}
+.si-row{display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;color:var(--muted);}
+.si-row span:last-child{color:var(--text);font-weight:500;}
+
+/* RANGE SLIDER */
+input[type=range]{-webkit-appearance:none;width:100%;height:5px;border-radius:3px;background:linear-gradient(to right,var(--purple) 0%,var(--cyan) 100%);outline:none;margin:8px 0;}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:#fff;box-shadow:0 0 8px var(--purple);cursor:none;}
+.range-labels{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-top:2px;}
+
+/* SEARCH */
+.search-wrap{position:relative;margin-bottom:16px;}
+.search-wrap i{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--muted);}
+.search-input{width:100%;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:10px;padding:10px 12px 10px 36px;color:var(--text);font-size:13px;outline:none;transition:.2s;}
+.search-input:focus{border-color:var(--purple);}
+
+/* PAGE HEADER */
+.page-hdr{margin-bottom:20px;}
+.page-hdr h2{font-family:'Orbitron',monospace;font-size:clamp(16px,3.5vw,22px);font-weight:700;color:var(--purple-l);}
+.page-hdr p{color:var(--muted);font-size:13px;margin-top:4px;}
+
+/* EMPTY STATE */
+.empty-state{text-align:center;padding:48px 20px;color:var(--muted);}
+.empty-state i{font-size:40px;margin-bottom:12px;opacity:.4;}
+.empty-state p{font-size:14px;}
+
+/* PROGRESS */
+.progress-bar{height:5px;background:rgba(255,255,255,0.06);border-radius:3px;overflow:hidden;margin-top:6px;}
+.progress-fill{height:100%;border-radius:3px;background:linear-gradient(to right,var(--purple),var(--cyan));transition:width .5s;}
+
+/* RESPONSIVE TABLE */
+@media(max-width:640px){.hide-mobile{display:none!important;}}
+
+/* ADMIN TABLE ACTIONS */
+.action-btns{display:flex;gap:6px;flex-wrap:wrap;}
+
+/* DIVIDER */
+.divider{border:none;border-top:1px solid var(--border);margin:20px 0;}
+
+/* NUMBER INPUT */
+.num-input{display:flex;align-items:center;gap:8px;}
+.num-btn{width:34px;height:34px;border-radius:8px;border:1px solid var(--border);background:rgba(255,255,255,0.04);color:var(--text);font-size:18px;display:flex;align-items:center;justify-content:center;cursor:none;transition:.2s;}
+.num-btn:hover{border-color:var(--purple);color:var(--purple-l);}
+
+/* GLOW TEXT */
+.glow-text{text-shadow:0 0 20px var(--purple-l),0 0 40px rgba(139,92,246,0.3);}
+.cyan-text{color:var(--cyan-l);}
+.purple-text{color:var(--purple-l);}
+
+/* ALERT */
+.alert{border-radius:10px;padding:12px 16px;font-size:13px;display:flex;align-items:flex-start;gap:10px;margin-bottom:14px;}
+.alert.info{background:rgba(6,182,212,0.08);border:1px solid rgba(6,182,212,0.25);color:var(--cyan-l);}
+.alert.warn{background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.25);color:var(--warn);}
+.alert.success{background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.25);color:var(--success);}
+.alert.error{background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.25);color:var(--error);}
+
+/* SPINNER */
+.spinner{width:20px;height:20px;border:2px solid rgba(255,255,255,0.1);border-top-color:var(--purple-l);border-radius:50%;animation:spin .6s linear infinite;display:inline-block;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* TICKET */
+.ticket-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:10px;}
+.ticket-card h4{font-size:14px;font-weight:600;margin-bottom:6px;}
+
+/* TOGGLE */
+.toggle{display:flex;align-items:center;gap:10px;cursor:none;}
+.toggle-track{width:42px;height:22px;background:rgba(255,255,255,0.1);border-radius:11px;position:relative;transition:.2s;border:1px solid var(--border);}
+.toggle-track.on{background:var(--purple-d);border-color:var(--purple);}
+.toggle-thumb{position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:#fff;transition:.2s;box-shadow:0 1px 4px rgba(0,0,0,0.5);}
+.toggle-track.on .toggle-thumb{left:22px;}
+
+/* FOOTER */
+.footer{text-align:center;padding:40px 20px;color:var(--muted);font-size:12px;border-top:1px solid var(--border);margin-top:60px;}
+.footer a{color:var(--purple-l);}
+</style>
+</head>
+<body>
+
+<!-- Background -->
+<canvas id="particleCanvas"></canvas>
+<div id="orbs"><div class="orb orb1"></div><div class="orb orb2"></div><div class="orb orb3"></div></div>
+<div id="grain"></div>
+<div id="cursor"></div>
+<div id="cursorRing"></div>
+<div id="toastContainer"></div>
+<div class="modal-overlay" id="modalOverlay"><div class="modal-box" id="modalBox"></div></div>
+
+<!-- NAVIGATION -->
+<nav id="navbar" style="display:none;">
+  <div class="nav-logo">⚡ My SocialPanel</div>
+  <div class="nav-desktop nav-links" id="navLinks"></div>
+  <button class="hamburger" id="hamburgerBtn" onclick="toggleMobileMenu()">
+    <span></span><span></span><span></span>
+  </button>
+  <div class="nav-mobile-menu" id="mobileMenu"></div>
+</nav>
+
+<!-- SIDEBAR OVERLAY (mobile) -->
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+<!-- APP -->
+<div id="app"></div>
+
+<script>
+'use strict';
+// ============================================================
+// DATA LAYER
+// ============================================================
+const DB = {
+  get:(k)=>{try{return JSON.parse(localStorage.getItem(k));}catch{return null;}},
+  set:(k,v)=>localStorage.setItem(k,JSON.stringify(v)),
+  rm:(k)=>localStorage.removeItem(k),
+  getUsers:()=>DB.get('msp_users')||[],
+  saveUsers:(u)=>DB.set('msp_users',u),
+  getServices:()=>DB.get('msp_services')||[],
+  saveServices:(s)=>DB.set('msp_services',s),
+  getOrders:()=>DB.get('msp_orders')||[],
+  saveOrders:(o)=>DB.set('msp_orders',o),
+  getDeposits:()=>DB.get('msp_deposits')||[],
+  saveDeposits:(d)=>DB.set('msp_deposits',d),
+  getProviders:()=>DB.get('msp_providers')||[],
+  saveProviders:(p)=>DB.set('msp_providers',p),
+  getSettings:()=>DB.get('msp_settings')||{siteName:'My SocialPanel',currency:'INR',currSymbol:'₹',minDeposit:50,maxDeposit:100000,upiId:'harshit@upi',bankName:'HDFC Bank',bankAcc:'1234567890',bankIFSC:'HDFC0001234',bankHolder:'Harshit',announcementText:'Welcome to My SocialPanel! 🎉',maintenanceMode:false},
+  saveSettings:(s)=>DB.set('msp_settings',s),
+  getSession:()=>DB.get('msp_session'),
+  saveSession:(s)=>DB.set('msp_session',s),
+  clearSession:()=>DB.rm('msp_session'),
+  adminSession:()=>DB.get('msp_admin_session'),
+  saveAdminSession:(s)=>DB.set('msp_admin_session',s),
+  clearAdminSession:()=>DB.rm('msp_admin_session'),
+};
+
+const ADMIN_CREDS = {username:'harshit0987',password:'Harshit@1234'};
+
+// ============================================================
+// INIT DEFAULT DATA
+// ============================================================
+function initData(){
+  if(!DB.get('msp_init')){
+    DB.set('msp_init',true);
+    const cats=['Instagram','Facebook','YouTube','TikTok','Twitter','Telegram'];
+    const sampleServices=[
+      {id:'s1',category:'Instagram',name:'Instagram Followers [Real High Quality]',description:'High quality Instagram followers. Real looking profiles with posts.',price:12,min:100,max:100000,type:'Default',status:'active',apiProvider:'',apiServiceId:''},
+      {id:'s2',category:'Instagram',name:'Instagram Likes [Fast Delivery]',description:'Fast Instagram likes within 1 hour of ordering.',price:5,min:50,max:50000,type:'Default',status:'active',apiProvider:'',apiServiceId:''},
+      {id:'s3',category:'Instagram',name:'Instagram Views [Instant]',description:'Instant Instagram video views.',price:2,min:100,max:1000000,type:'Default',status:'active',apiProvider:'',apiServiceId:''},
+      {id:'s4',category:'Instagram',name:'Instagram Story Views',description:'Instagram story views with fast delivery.',price:3,min:100,max:50000,type:'Default',status:'active',apiProvider:'',apiServiceId:''},
+      {id:'s5',category:'Facebook',name:'Facebook Page Likes [Worldwide]',description:'Real Facebook page likes from worldwide accounts.',price:10,min:100,max:100000,type:'Default',status:'active',apiProvider:'',apiServiceId:''},
+      {id:'s6',category:'Facebook',name:'Facebook Post Likes',description:'Facebook post likes with quick delivery.',price:4,min:50,max:10000,type:'Default',status:'active',apiProvider:'',apiServiceId:''},
+      {id:'s7',category:'YouTube',name:'YouTube Views [HQ]',description:'High quality YouTube video views. Safe for monetized channels.',price:8,min:500,max:10000000,type:'Default',status:'active',apiProvider:'',apiServiceId:''},
+      {id:'s8',category:'YouTube',name:'YouTube Subscribers [Real]',description:'Real YouTube subscribers. Non-drop guarantee.',price:25,min:100,max:50000,type:'Default',status:'active',apiProvider:'',apiServiceId:''},
+      {id:'s9',category:'YouTube',name:'YouTube Likes',description:'Fast YouTube video likes.',price:6,min:100,max:100000,type:'Default',status:'active',apiProvider:'',apiServiceId:''},
+      {id:'s10',category:'TikTok',name:'TikTok Followers [Fast]',description:'TikTok followers with fast delivery.',price:9,min:100,max:500000,type:'Default',status:'active',apiProvider:'',apiServiceId:''},
+      {id:'s11',category:'TikTok',name:'TikTok Views [Instant]',description:'Instant TikTok video views.',price:2,min:500,max:10000000,type:'Default',status:'active',apiProvider:'',apiServiceId:''},
+      {id:'s12',category:'TikTok',name:'TikTok Likes',description:'TikTok likes with good quality.',price:4,min:100,max:100000,type:'Default',status:'active',apiProvider:'',apiServiceId:''},
+      {id:'s13',category:'Twitter',name:'Twitter Followers [Real]',description:'Real Twitter followers. Permanent and non-drop.',price:15,min:100,max:100000,type:'Default',status:'active',apiProvider:'',apiServiceId:''},
+      {id:'s14',category:'Twitter',name:'Twitter Likes',description:'Fast Twitter post likes.',price:5,min:50,max:50000,type:'Default',status:'active',apiProvider:'',apiServiceId:''},
+      {id:'s15',category:'Telegram',name:'Telegram Members [Real]',description:'Real Telegram channel/group members.',price:20,min:100,max:500000,type:'Default',status:'active',apiProvider:'',apiServiceId:''},
+    ];
+    DB.saveServices(sampleServices);
+    DB.saveOrders([]);
+    DB.saveDeposits([]);
+    DB.saveProviders([]);
+    DB.saveUsers([]);
+  }
+}
+
+// ============================================================
+// HELPERS
+// ============================================================
+const uid=()=>Math.random().toString(36).substr(2,9);
+const fmt=(n)=>{const s=DB.getSettings();return`${s.currSymbol||'₹'}${Number(n).toFixed(2)}`;};
+const fmtDate=(d)=>new Date(d).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});
+const fmtDateShort=(d)=>new Date(d).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'});
+const platformIcon=(cat)=>{
+  const m={'Instagram':'📸','Facebook':'👤','YouTube':'▶️','TikTok':'🎵','Twitter':'🐦','Telegram':'✈️'};
+  return m[cat]||'🌐';
+};
+const platformColor=(cat)=>{
+  const m={'Instagram':'#E1306C','Facebook':'#1877F2','YouTube':'#FF0000','TikTok':'#000000','Twitter':'#1DA1F2','Telegram':'#2AABEE'};
+  return m[cat]||'#8B5CF6';
+};
+
+// ============================================================
+// TOAST
+// ============================================================
+function toast(msg,type='info',dur=3000){
+  const icons={success:'✅',error:'❌',info:'ℹ️',warn:'⚠️'};
+  const el=document.createElement('div');
+  el.className=`toast ${type}`;
+  el.innerHTML=`<span>${icons[type]||'💬'}</span><span>${msg}</span>`;
+  document.getElementById('toastContainer').appendChild(el);
+  setTimeout(()=>{el.style.animation='toastOut .3s ease forwards';setTimeout(()=>el.remove(),300);},dur);
+}
+
+// ============================================================
+// MODAL
+// ============================================================
+function showModal(html,onClose){
+  const overlay=document.getElementById('modalOverlay');
+  const box=document.getElementById('modalBox');
+  box.innerHTML=`<button class="modal-close" onclick="closeModal()"><i class="fa fa-times"></i></button>${html}`;
+  overlay.classList.add('show');
+  if(onClose) overlay._onClose=onClose;
+}
+function closeModal(){
+  const overlay=document.getElementById('modalOverlay');
+  overlay.classList.remove('show');
+  if(overlay._onClose){overlay._onClose();overlay._onClose=null;}
+}
+document.getElementById('modalOverlay').addEventListener('click',function(e){if(e.target===this)closeModal();});
+
+// ============================================================
+// CURSOR
+// ============================================================
+let mx=window.innerWidth/2,my=window.innerHeight/2;
+let rx=mx,ry=my;
+const cursor=document.getElementById('cursor');
+const ring=document.getElementById('cursorRing');
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cursor.style.left=mx+'px';cursor.style.top=my+'px';});
+document.addEventListener('mousedown',()=>document.body.classList.add('clicking'));
+document.addEventListener('mouseup',()=>document.body.classList.remove('clicking'));
+(function animRing(){rx+=(mx-rx)*.12;ry+=(my-ry)*.12;ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(animRing);})();
+
+// ============================================================
+// PARTICLE CANVAS
+// ============================================================
+(function(){
+  const canvas=document.getElementById('particleCanvas');
+  const ctx=canvas.getContext('2d');
+  let W,H,particles=[];
+  function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight;}
+  resize();window.addEventListener('resize',resize);
+  const N=Math.min(70,Math.floor(window.innerWidth/15));
+  for(let i=0;i<N;i++)particles.push({
+    x:Math.random()*window.innerWidth,y:Math.random()*window.innerHeight,
+    vx:(Math.random()-.5)*.4,vy:(Math.random()-.5)*.4,
+    r:Math.random()*2+.5,
+    c:Math.random()>.5?'rgba(139,92,246,':'rgba(6,182,212,'
+  });
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    for(let i=0;i<particles.length;i++){
+      const p=particles[i];
+      p.x+=p.vx;p.y+=p.vy;
+      if(p.x<0||p.x>W)p.vx*=-1;
+      if(p.y<0||p.y>H)p.vy*=-1;
+      ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      ctx.fillStyle=p.c+'0.7)';ctx.fill();
+      for(let j=i+1;j<particles.length;j++){
+        const q=particles[j];
+        const d=Math.hypot(p.x-q.x,p.y-q.y);
+        if(d<120){
+          ctx.beginPath();ctx.moveTo(p.x,p.y);ctx.lineTo(q.x,q.y);
+          const a=1-d/120;
+          ctx.strokeStyle=`rgba(139,92,246,${a*.25})`;ctx.lineWidth=.5;ctx.stroke();
+        }
+      }
+    }
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// ============================================================
+// ROUTER
+// ============================================================
+const Router={
+  current:'',
+  go(page,params={}){
+    window.location.hash=page;
+    Router.current=page;
+    Router.render(page,params);
+  },
+  render(page,params={}){
+    const hash=page||window.location.hash.replace('#','');
+    // Check admin routes
+    if(hash.startsWith('admin')){renderAdminRouter(hash,params);return;}
+    const session=DB.getSession();
+    const guestPages=['','home','login','signup'];
+    if(!session && !guestPages.includes(hash)){Router.go('login');return;}
+    if(session && (hash==='login'||hash==='signup')){Router.go('dashboard');return;}
+    renderPage(hash,params);
+  }
+};
+window.addEventListener('hashchange',()=>Router.render());
+function go(p){Router.go(p);}
+
+// ============================================================
+// AUTH
+// ============================================================
+function validateEmail(e){return/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);}
+function validatePassword(p){
+  return{
+    len:p.length>=8,
+    upper:/[A-Z]/.test(p),
+    lower:/[a-z]/.test(p),
+    num:/[0-9].*[0-9]/.test(p),
+    special:/[@#$!%^&*()_+\-=\[\]{}|;:,.<>?]/.test(p)
+  };
+}
+function pwScore(p){const v=validatePassword(p);return Object.values(v).filter(Boolean).length;}
+
+function login(ue,pw){
+  const users=DB.getUsers();
+  const user=users.find(u=>(u.username===ue||u.email===ue)&&u.password===pw);
+  if(!user)return{ok:false,msg:'❌ Invalid username/email or password'};
+  if(user.blocked)return{ok:false,msg:'🚫 Your account has been suspended. Contact support.'};
+  DB.saveSession({userId:user.id,username:user.username,email:user.email});
+  return{ok:true,user};
+}
+function signup(username,email,pw){
+  if(!username||username.length<3)return{ok:false,msg:'Username must be at least 3 characters'};
+  if(!/^[a-zA-Z0-9_]+$/.test(username))return{ok:false,msg:'Username can only have letters, numbers, underscore'};
+  if(!validateEmail(email))return{ok:false,msg:'Please enter a valid email address'};
+  const v=validatePassword(pw);
+  if(!v.len)return{ok:false,msg:'Password must be at least 8 characters'};
+  if(!v.upper)return{ok:false,msg:'Password must contain at least 1 uppercase letter'};
+  if(!v.lower)return{ok:false,msg:'Password must contain at least 1 lowercase letter'};
+  if(!v.num)return{ok:false,msg:'Password must contain at least 2 numbers'};
+  if(!v.special)return{ok:false,msg:'Password must contain at least 1 special character (@#$!%&*)'};
+  const users=DB.getUsers();
+  if(users.find(u=>u.username===username))return{ok:false,msg:'Username already taken'};
+  if(users.find(u=>u.email===email))return{ok:false,msg:'Email already registered'};
+  const user={id:uid(),username,email,password:pw,balance:0,joinDate:Date.now(),blocked:false,totalOrders:0,totalSpent:0};
+  users.push(user);DB.saveUsers(users);
+  DB.saveSession({userId:user.id,username:user.username,email:user.email});
+  return{ok:true,user};
+}
+function logout(){DB.clearSession();go('home');}
+function getUser(){
+  const sess=DB.getSession();if(!sess)return null;
+  return DB.getUsers().find(u=>u.id===sess.userId)||null;
+}
+function updateUser(id,data){
+  const users=DB.getUsers();
+  const i=users.findIndex(u=>u.id===id);
+  if(i>=0){users[i]={...users[i],...data};DB.saveUsers(users);}
+}
+
+// ============================================================
+// NAV RENDERING
+// ============================================================
+function renderNav(){
+  const nav=document.getElementById('navbar');
+  const linksEl=document.getElementById('navLinks');
+  const mobileEl=document.getElementById('mobileMenu');
+  const session=DB.getSession();
+  const hash=window.location.hash.replace('#','');
+  if(hash.startsWith('admin')){nav.style.display='none';return;}
+  nav.style.display='flex';
+  if(session){
+    const user=getUser();
+    const bal=user?fmt(user.balance):'₹0';
+    const html=`
+      <span class="user-bal">💰 ${bal}</span>
+      <button class="nav-btn" onclick="go('dashboard')">📊 Dashboard</button>
+      <button class="nav-btn" onclick="go('neworder')">🛒 New Order</button>
+      <button class="nav-btn primary" onclick="go('deposit')">💳 Add Funds</button>
+      <button class="nav-btn" onclick="logout()">🚪 Logout</button>`;
+    linksEl.innerHTML=html;mobileEl.innerHTML=html;
+  } else {
+    const html=`<button class="nav-btn" onclick="go('login')">🔐 Login</button><button class="nav-btn primary" onclick="go('signup')">🚀 Get Started</button>`;
+    linksEl.innerHTML=html;mobileEl.innerHTML=html;
+  }
+}
+function toggleMobileMenu(){document.getElementById('mobileMenu').classList.toggle('open');}
+function closeMobileMenu(){document.getElementById('mobileMenu').classList.remove('open');}
+
+// ============================================================
+// RENDER PAGE
+// ============================================================
+function renderPage(page,params={}){
+  document.getElementById('app').innerHTML='';
+  renderNav();
+  closeMobileMenu();
+  const pages={
+    '':renderLanding,'home':renderLanding,
+    'login':renderLogin,'signup':renderSignup,
+    'dashboard':renderDashboard,'services':renderServices,
+    'neworder':renderNewOrder,'orders':renderOrders,
+    'deposit':renderDeposit,'profile':renderProfile,
+  };
+  const fn=pages[page]||renderLanding;
+  fn(params);
+  window.scrollTo(0,0);
+}
+
+// ============================================================
+// LANDING
+// ============================================================
+function renderLanding(){
+  const s=DB.getSettings();
+  const services=DB.getServices();
+  const orders=DB.getOrders();
+  const users=DB.getUsers();
+  document.getElementById('app').innerHTML=`
+<div class="page active">
+  <div class="hero">
+    <div class="hero-badge">🌟 India's #1 SMM Panel &nbsp;·&nbsp; Trusted by 50,000+ Users</div>
+    <h1>Grow Your Social Media<br><span class="grad">Like Never Before</span> 🚀</h1>
+    <p>The most advanced and affordable SMM panel in India. Instagram, YouTube, TikTok, Facebook & more — all in one place!</p>
+    <div class="hero-btns">
+      <button class="btn btn-primary" onclick="go('signup')">🎯 Get Started Free</button>
+      <button class="btn btn-outline" onclick="go('services')">🔍 Browse Services</button>
+    </div>
+  </div>
+  <div class="stats-grid">
+    <div class="stat-card"><div class="stat-num">${(services.length+850).toLocaleString()}+</div><div class="stat-label">📦 Services Available</div></div>
+    <div class="stat-card"><div class="stat-num">${(users.length+50000).toLocaleString()}+</div><div class="stat-label">👥 Happy Customers</div></div>
+    <div class="stat-card"><div class="stat-num">${(orders.length+1200000).toLocaleString()}+</div><div class="stat-label">✅ Orders Completed</div></div>
+    <div class="stat-card"><div class="stat-num">24/7</div><div class="stat-label">🎧 Customer Support</div></div>
+    <div class="stat-card"><div class="stat-num">⚡ Fast</div><div class="stat-label">🚀 Instant Delivery</div></div>
+  </div>
+  <div class="features">
+    <div class="section-title">Why Choose My SocialPanel? ✨</div>
+    <div class="features-grid">
+      <div class="feature-card"><div class="feature-icon">⚡</div><h3>Instant Delivery</h3><p>Orders start processing immediately. Most services deliver within minutes.</p></div>
+      <div class="feature-card"><div class="feature-icon">💰</div><h3>Lowest Prices</h3><p>Competitive rates with bulk discounts. Save more when you spend more.</p></div>
+      <div class="feature-card"><div class="feature-icon">🛡️</div><h3>100% Safe</h3><p>All services are safe for your accounts. No password required ever.</p></div>
+      <div class="feature-card"><div class="feature-icon">📱</div><h3>All Platforms</h3><p>Instagram, YouTube, TikTok, Facebook, Twitter, Telegram & more.</p></div>
+      <div class="feature-card"><div class="feature-icon">🔄</div><h3>24/7 Refill</h3><p>Drop protection with automatic refills on eligible services.</p></div>
+      <div class="feature-card"><div class="feature-icon">🎧</div><h3>Live Support</h3><p>Round the clock customer support to resolve any issues instantly.</p></div>
+    </div>
+  </div>
+  <div class="footer">
+    <p>© 2024 <strong>My SocialPanel</strong> · MySocialPanel.in · Made with ❤️ in India 🇮🇳</p>
+    <p style="margin-top:6px;">All trademarks are property of their respective owners. We are not affiliated with any social media platform.</p>
+  </div>
+</div>`;
+}
+
+// ============================================================
+// LOGIN
+// ============================================================
+function renderLogin(){
+  document.getElementById('app').innerHTML=`
+<div class="page active auth-page">
+  <div class="auth-box">
+    <h2>Welcome Back! 👋</h2>
+    <p class="sub">Sign in to your My SocialPanel account</p>
+    <div class="form-group">
+      <label>Username or Email</label>
+      <div class="input-icon"><i class="fa fa-user"></i><input class="form-input" id="loginUE" type="text" placeholder="Enter username or email" autocomplete="username"></div>
+    </div>
+    <div class="form-group">
+      <label>Password</label>
+      <div class="input-icon"><i class="fa fa-lock"></i><input class="form-input" id="loginPW" type="password" placeholder="Enter password" autocomplete="current-password">
+      <i class="fa fa-eye" id="eyeToggle" style="left:auto;right:12px;cursor:none;" onclick="toggleEye('loginPW','eyeToggle')"></i></div>
+      <div id="loginErr" class="field-error" style="display:none;"></div>
+    </div>
+    <button class="btn btn-primary btn-full" onclick="doLogin()" id="loginBtn">🔐 Sign In</button>
+    <div class="auth-switch">Don't have an account? <a href="#" onclick="go('signup')">Create one 🚀</a></div>
+    <div style="text-align:center;margin-top:10px;font-size:11px;color:var(--muted);">Admin? <a href="#admin" style="color:var(--purple-l);">Go to Admin Panel</a></div>
+  </div>
+</div>`;
+  document.getElementById('loginPW').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
+  document.getElementById('loginUE').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
+}
+function toggleEye(id,iconId){
+  const inp=document.getElementById(id);
+  const ico=document.getElementById(iconId);
+  if(inp.type==='password'){inp.type='text';ico.className='fa fa-eye-slash';}
+  else{inp.type='password';ico.className='fa fa-eye';}
+  inp.style.paddingRight='36px';
+}
+function doLogin(){
+  const ue=document.getElementById('loginUE').value.trim();
+  const pw=document.getElementById('loginPW').value;
+  const errEl=document.getElementById('loginErr');
+  const btn=document.getElementById('loginBtn');
+  if(!ue||!pw){errEl.style.display='flex';errEl.textContent='⚠️ Please fill all fields';return;}
+  btn.innerHTML='<span class="spinner"></span> Signing in...';btn.disabled=true;
+  setTimeout(()=>{
+    const r=login(ue,pw);
+    if(r.ok){toast('Welcome back! 🎉','success');go('dashboard');}
+    else{errEl.style.display='flex';errEl.textContent=r.msg;btn.innerHTML='🔐 Sign In';btn.disabled=false;}
+  },800);
+}
+
+// ============================================================
+// SIGNUP
+// ============================================================
+function renderSignup(){
+  document.getElementById('app').innerHTML=`
+<div class="page active auth-page">
+  <div class="auth-box">
+    <h2>Create Account 🚀</h2>
+    <p class="sub">Join My SocialPanel today — it's free!</p>
+    <div class="form-group">
+      <label>Username <span>*</span></label>
+      <div class="input-icon"><i class="fa fa-at"></i><input class="form-input" id="suName" type="text" placeholder="e.g. harshit99" autocomplete="username" oninput="checkUsername(this)"></div>
+      <div id="suNameMsg"></div>
+    </div>
+    <div class="form-group">
+      <label>Email Address <span>*</span></label>
+      <div class="input-icon"><i class="fa fa-envelope"></i><input class="form-input" id="suEmail" type="email" placeholder="you@example.com" autocomplete="email" oninput="checkEmail(this)"></div>
+      <div id="suEmailMsg"></div>
+    </div>
+    <div class="form-group">
+      <label>Password <span>*</span></label>
+      <div class="input-icon"><i class="fa fa-lock"></i><input class="form-input" id="suPW" type="password" placeholder="Min 8 chars, @#, 2 numbers" autocomplete="new-password" oninput="checkPW(this)">
+      <i class="fa fa-eye" id="suEye" style="left:auto;right:12px;cursor:none;" onclick="toggleEye('suPW','suEye')"></i></div>
+      <div class="pw-strength"><div class="pw-bar" id="pwBar" style="width:0%"></div></div>
+      <div id="pwHint" class="pw-hint" style="color:var(--muted)">Password strength indicator</div>
+    </div>
+    <div id="signupErr" class="alert error" style="display:none;"></div>
+    <button class="btn btn-primary btn-full" onclick="doSignup()" id="signupBtn">🎯 Create Account</button>
+    <div class="auth-switch">Already have an account? <a href="#" onclick="go('login')">Sign In 🔐</a></div>
+    <div style="text-align:center;margin-top:12px;font-size:11px;color:var(--muted);">By signing up you agree to our Terms of Service</div>
+  </div>
+</div>`;
+}
+function checkUsername(el){
+  const v=el.value.trim();const msg=document.getElementById('suNameMsg');
+  if(!v){msg.innerHTML='';el.className='form-input';return;}
+  if(v.length<3){msg.innerHTML='<div class="field-error">⚠️ At least 3 characters</div>';el.className='form-input error-field';return;}
+  if(!/^[a-zA-Z0-9_]+$/.test(v)){msg.innerHTML='<div class="field-error">⚠️ Only letters, numbers, underscore</div>';el.className='form-input error-field';return;}
+  const users=DB.getUsers();
+  if(users.find(u=>u.username===v)){msg.innerHTML='<div class="field-error">❌ Username already taken</div>';el.className='form-input error-field';}
+  else{msg.innerHTML='<div class="field-success">✅ Username available</div>';el.className='form-input success-field';}
+}
+function checkEmail(el){
+  const v=el.value.trim();const msg=document.getElementById('suEmailMsg');
+  if(!v){msg.innerHTML='';el.className='form-input';return;}
+  if(!validateEmail(v)){msg.innerHTML='<div class="field-error">❌ Enter a valid email (e.g. user@gmail.com)</div>';el.className='form-input error-field';}
+  else{msg.innerHTML='<div class="field-success">✅ Valid email</div>';el.className='form-input success-field';}
+}
+function checkPW(el){
+  const p=el.value;const score=pwScore(p);
+  const bar=document.getElementById('pwBar');const hint=document.getElementById('pwHint');
+  const w=[0,20,40,65,85,100][score];
+  const cols=['','#EF4444','#F59E0B','#EAB308','#22C55E','#10B981'][score];
+  const labels=['','Very Weak 😱','Weak 😟','Fair 🤔','Strong 💪','Very Strong 🔥'][score]||'';
+  bar.style.width=w+'%';bar.style.background=cols;hint.textContent=p.length?`${labels} — Must have: 8+ chars, uppercase, lowercase, 2 numbers, special char (@#$!)`:'Password strength indicator';
+  hint.style.color=score>=3?'var(--success)':score>=2?'var(--warn)':'var(--error)';
+}
+function doSignup(){
+  const name=document.getElementById('suName').value.trim();
+  const email=document.getElementById('suEmail').value.trim();
+  const pw=document.getElementById('suPW').value;
+  const errEl=document.getElementById('signupErr');
+  const btn=document.getElementById('signupBtn');
+  errEl.style.display='none';
+  btn.innerHTML='<span class="spinner"></span> Creating...';btn.disabled=true;
+  setTimeout(()=>{
+    const r=signup(name,email,pw);
+    if(r.ok){toast('Account created! Welcome 🎉','success');go('dashboard');}
+    else{errEl.style.display='flex';errEl.innerHTML=`⚠️ ${r.msg}`;btn.innerHTML='🎯 Create Account';btn.disabled=false;}
+  },900);
+}
+
+// ============================================================
+// DASHBOARD
+// ============================================================
+function dashLayout(activeId,content){
+  const user=getUser();if(!user){go('login');return;}
+  const navItems=[
+    {id:'dashboard',icon:'fa-chart-pie',label:'Dashboard',emoji:'📊'},
+    {id:'neworder',icon:'fa-plus-circle',label:'New Order',emoji:'🛒'},
+    {id:'orders',icon:'fa-list',label:'My Orders',emoji:'📦'},
+    {id:'services',icon:'fa-th',label:'Services',emoji:'⚡'},
+    {id:'deposit',icon:'fa-wallet',label:'Add Funds',emoji:'💳'},
+    {id:'profile',icon:'fa-user-circle',label:'Profile',emoji:'👤'},
+  ];
+  const sidebarHtml=navItems.map(n=>`<button class="nav-item ${n.id===activeId?'active':''}" onclick="go('${n.id}')">${n.emoji} <i class="fas ${n.icon}"></i> ${n.label}</button>`).join('');
+  const bottomHtml=navItems.map(n=>`<button class="bn-item ${n.id===activeId?'active':''}" onclick="go('${n.id}')"><i class="fas ${n.icon}"></i>${n.label}</button>`).join('');
+  document.getElementById('app').innerHTML=`
+<div class="dash-layout">
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-user">
+      <div class="sidebar-avatar">${user.username.charAt(0).toUpperCase()}</div>
+      <div class="sidebar-name">@${user.username}</div>
+      <div class="sidebar-bal">Balance: ${fmt(user.balance)}</div>
+    </div>
+    <div class="sidebar-nav">${sidebarHtml}
+      <hr class="divider">
+      <button class="nav-item" onclick="logout()">🚪 <i class="fas fa-sign-out-alt"></i> Logout</button>
+    </div>
+  </div>
+  <div class="dash-content">${content}</div>
+  <div class="bottom-nav">${bottomHtml}</div>
+</div>`;
+  const s=DB.getSettings();
+  if(s.announcementText){const ann=document.querySelector('.dash-content');if(ann){const d=document.createElement('div');d.className='alert info';d.style.marginBottom='16px';d.innerHTML=`📢 ${s.announcementText}`;ann.prepend(d);}}
+}
+
+function renderDashboard(){
+  const user=getUser();if(!user)return;
+  const orders=DB.getOrders().filter(o=>o.userId===user.id);
+  const deposits=DB.getDeposits().filter(d=>d.userId===user.id&&d.status==='approved');
+  const pending=orders.filter(o=>o.status==='pending').length;
+  const processing=orders.filter(o=>o.status==='processing').length;
+  const completed=orders.filter(o=>o.status==='completed').length;
+  const recentOrders=orders.slice(-5).reverse();
+  const services=DB.getServices().filter(s=>s.status==='active');
+  dashLayout('dashboard',`
+<div class="page-hdr"><h2>Dashboard 📊</h2><p>Welcome back, @${user.username}! 👋</p></div>
+<div class="stats-row">
+  <div class="card"><div class="card-title">💰 Balance</div><div class="card-val cyan">${fmt(user.balance)}</div><div style="margin-top:8px;"><button class="btn-sm btn-cyan" onclick="go('deposit')">+ Add Funds</button></div></div>
+  <div class="card"><div class="card-title">📦 Total Orders</div><div class="card-val purple">${orders.length}</div></div>
+  <div class="card"><div class="card-title">⏳ Pending</div><div class="card-val yellow">${pending+processing}</div></div>
+  <div class="card"><div class="card-title">✅ Completed</div><div class="card-val green">${completed}</div></div>
+</div>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin-bottom:24px;">
+  <div class="card" style="cursor:none;" onclick="go('neworder')">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <div style="font-size:32px;">🛒</div>
+      <div><div style="font-size:15px;font-weight:600;">New Order</div><div style="font-size:12px;color:var(--muted);">Browse ${services.length}+ services</div></div>
+      <i class="fa fa-arrow-right" style="margin-left:auto;color:var(--muted);"></i>
+    </div>
+  </div>
+  <div class="card" style="cursor:none;" onclick="go('deposit')">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <div style="font-size:32px;">💳</div>
+      <div><div style="font-size:15px;font-weight:600;">Add Funds</div><div style="font-size:12px;color:var(--muted);">Manual payment</div></div>
+      <i class="fa fa-arrow-right" style="margin-left:auto;color:var(--muted);"></i>
+    </div>
+  </div>
+</div>
+<div class="card">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+    <div style="font-size:14px;font-weight:600;">📋 Recent Orders</div>
+    <button class="btn-sm btn-ghost" onclick="go('orders')">View All →</button>
+  </div>
+  ${recentOrders.length?`<div class="table-wrap"><table>
+    <thead><tr><th>ID</th><th>Service</th><th>Qty</th><th>Charge</th><th>Status</th></tr></thead>
+    <tbody>${recentOrders.map(o=>{
+      const svc=DB.getServices().find(s=>s.id===o.serviceId)||{name:'Unknown'};
+      return`<tr>
+        <td style="font-family:monospace;font-size:11px;color:var(--muted)">#${o.id.substr(0,6).toUpperCase()}</td>
+        <td style="max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${svc.name}</td>
+        <td>${o.quantity.toLocaleString()}</td>
+        <td>${fmt(o.charge)}</td>
+        <td><span class="badge ${o.status}">${o.status}</span></td>
+      </tr>`;
+    }).join('')}</tbody>
+  </table></div>`:`<div class="empty-state"><i class="fa fa-inbox"></i><p>No orders yet. <a href="#" onclick="go('neworder')">Place your first order! 🚀</a></p></div>`}
+</div>`);
+}
+
+// ============================================================
+// SERVICES
+// ============================================================
+function renderServices(params={}){
+  const services=DB.getServices().filter(s=>s.status==='active');
+  const cats=['All',...new Set(services.map(s=>s.category))];
+  const sel=params.cat||'All';
+  const filtered=sel==='All'?services:services.filter(s=>s.category===sel);
+  dashLayout('services',`
+<div class="page-hdr"><h2>⚡ Services</h2><p>Browse all available SMM services</p></div>
+<div class="search-wrap"><i class="fa fa-search"></i><input class="search-input" placeholder="Search services..." oninput="filterServicesSearch(this.value)"></div>
+<div class="cat-tabs" id="catTabs">${cats.map(c=>`<button class="cat-tab ${c===sel?'active':''}" onclick="filterServicesCat('${c}')">${platformIcon(c)} ${c}</button>`).join('')}</div>
+<div class="services-grid" id="servicesGrid">${renderServiceCards(filtered)}</div>`);
+}
+function renderServiceCards(services){
+  if(!services.length)return`<div class="empty-state" style="grid-column:1/-1;"><i class="fa fa-search"></i><p>No services found</p></div>`;
+  return services.map(s=>`
+<div class="service-card">
+  <div class="sc-platform">
+    <div class="sc-icon" style="background:${platformColor(s.category)}22;">${platformIcon(s.category)}</div>
+    <div><div style="font-size:13px;font-weight:600;">${s.category}</div><div class="sc-cat">${s.type}</div></div>
+  </div>
+  <div class="sc-name">${s.name}</div>
+  <div style="font-size:11px;color:var(--muted);line-height:1.5;margin-bottom:8px;">${s.description}</div>
+  <div class="sc-meta">
+    <div><div class="sc-price">₹${s.price}/1000</div><div class="sc-range">Min: ${s.min.toLocaleString()} · Max: ${s.max.toLocaleString()}</div></div>
+    <button class="btn-sm btn-purple" onclick="orderService('${s.id}')">🛒 Order</button>
+  </div>
+</div>`).join('');
+}
+function filterServicesCat(cat){
+  const services=DB.getServices().filter(s=>s.status==='active');
+  const filtered=cat==='All'?services:services.filter(s=>s.category===cat);
+  document.querySelectorAll('.cat-tab').forEach(t=>t.classList.toggle('active',t.textContent.includes(cat)));
+  document.getElementById('servicesGrid').innerHTML=renderServiceCards(filtered);
+}
+function filterServicesSearch(q){
+  const services=DB.getServices().filter(s=>s.status==='active');
+  const filtered=q?services.filter(s=>s.name.toLowerCase().includes(q.toLowerCase())||s.category.toLowerCase().includes(q.toLowerCase())):services;
+  document.getElementById('servicesGrid').innerHTML=renderServiceCards(filtered);
+}
+function orderService(sid){Router.go('neworder',{serviceId:sid});}
+
+// ============================================================
+// NEW ORDER
+// ============================================================
+function renderNewOrder(params={}){
+  const services=DB.getServices().filter(s=>s.status==='active');
+  const user=getUser();
+  dashLayout('neworder',`
+<div class="page-hdr"><h2>🛒 New Order</h2><p>Place a new social media order</p></div>
+<div class="order-form">
+  <div class="form-group">
+    <label>Select Service</label>
+    <select class="select-input" id="orderSvc" onchange="updateOrderPreview()">
+      <option value="">-- Select a service --</option>
+      ${[...new Set(services.map(s=>s.category))].map(cat=>`
+        <optgroup label="${platformIcon(cat)} ${cat}">
+          ${services.filter(s=>s.category===cat).map(s=>`<option value="${s.id}" ${params.serviceId===s.id?'selected':''}>${s.name} — ₹${s.price}/1000</option>`).join('')}
+        </optgroup>`).join('')}
+    </select>
+  </div>
+  <div id="serviceInfo" style="display:none;" class="service-info"></div>
+  <div class="form-group">
+    <label>Link / URL 🔗</label>
+    <div class="input-icon"><i class="fa fa-link"></i><input class="form-input" id="orderLink" type="url" placeholder="https://..." oninput="updateOrderPreview()"></div>
+    <div id="linkErr" class="field-error" style="display:none;"></div>
+  </div>
+  <div class="form-group" id="qtyGroup">
+    <label>Quantity: <span id="qtyDisplay" style="color:var(--cyan-l);font-family:Orbitron,monospace;font-weight:700;">1000</span></label>
+    <input type="range" id="orderQty" min="100" max="10000" value="1000" step="100" oninput="updateOrderPreview()">
+    <div class="range-labels"><span id="minLbl">Min: 100</span><span id="maxLbl">Max: 10,000</span></div>
+    <div class="num-input" style="margin-top:8px;">
+      <button class="num-btn" onclick="changeQty(-100)">−</button>
+      <input class="form-input" id="qtyInput" type="number" value="1000" style="text-align:center;max-width:120px;" oninput="syncQtyInput()">
+      <button class="num-btn" onclick="changeQty(100)">+</button>
+    </div>
+  </div>
+  <div class="price-preview" id="pricePreview" style="display:none;">
+    <div class="price-row"><span>Service Rate</span><span id="rateDisplay">₹0/1000</span></div>
+    <div class="price-row"><span>Quantity</span><span id="qtyPreview">0</span></div>
+    <div class="price-row"><span>Your Balance</span><span id="balDisplay">${fmt(user.balance)}</span></div>
+    <hr style="border-color:rgba(6,182,212,0.2);margin:8px 0;">
+    <div class="price-row"><span style="font-weight:600;">Total Cost</span><span class="price-total" id="totalDisplay">₹0.00</span></div>
+    <div id="balWarn" style="display:none;" class="field-error" style="margin-top:6px;"></div>
+  </div>
+  <div id="orderErr" class="alert error" style="display:none;"></div>
+  <button class="btn btn-primary btn-full" onclick="placeOrder()" id="orderBtn" style="margin-top:8px;">🚀 Place Order</button>
+</div>`);
+  if(params.serviceId)updateOrderPreview();
+}
+function updateOrderPreview(){
+  const sid=document.getElementById('orderSvc').value;
+  const qty=parseInt(document.getElementById('orderQty').value)||1000;
+  document.getElementById('qtyDisplay').textContent=qty.toLocaleString();
+  document.getElementById('qtyInput').value=qty;
+  if(!sid){document.getElementById('pricePreview').style.display='none';document.getElementById('serviceInfo').style.display='none';return;}
+  const svc=DB.getServices().find(s=>s.id===sid);if(!svc)return;
+  const range=document.getElementById('orderQty');
+  range.min=svc.min;range.max=Math.min(svc.max,100000);
+  document.getElementById('minLbl').textContent=`Min: ${svc.min.toLocaleString()}`;
+  document.getElementById('maxLbl').textContent=`Max: ${svc.max.toLocaleString()}`;
+  document.getElementById('serviceInfo').style.display='block';
+  document.getElementById('serviceInfo').innerHTML=`
+    <div class="si-row"><span>📦 Category</span><span>${svc.category}</span></div>
+    <div class="si-row"><span>💰 Rate</span><span>₹${svc.price} per 1,000</span></div>
+    <div class="si-row"><span>📊 Min/Max</span><span>${svc.min.toLocaleString()} – ${svc.max.toLocaleString()}</span></div>
+    <div class="si-row"><span>ℹ️ Type</span><span>${svc.type}</span></div>`;
+  const actualQty=Math.max(svc.min,Math.min(svc.max,qty));
+  const total=(actualQty/1000)*svc.price;
+  const user=getUser();
+  document.getElementById('pricePreview').style.display='block';
+  document.getElementById('rateDisplay').textContent=`₹${svc.price}/1000`;
+  document.getElementById('qtyPreview').textContent=actualQty.toLocaleString();
+  document.getElementById('totalDisplay').textContent=fmt(total);
+  document.getElementById('balDisplay').textContent=fmt(user.balance);
+  const warn=document.getElementById('balWarn');
+  if(user.balance<total){warn.style.display='flex';warn.textContent=`⚠️ Insufficient balance. Need ${fmt(total-user.balance)} more.`;}
+  else warn.style.display='none';
+}
+function changeQty(delta){
+  const inp=document.getElementById('orderQty');
+  inp.value=Math.max(parseInt(inp.min)||100,Math.min(parseInt(inp.max)||100000,parseInt(inp.value)+delta));
+  updateOrderPreview();
+}
+function syncQtyInput(){
+  const v=parseInt(document.getElementById('qtyInput').value)||1000;
+  document.getElementById('orderQty').value=v;
+  updateOrderPreview();
+}
+function placeOrder(){
+  const sid=document.getElementById('orderSvc').value;
+  const link=document.getElementById('orderLink').value.trim();
+  const qty=parseInt(document.getElementById('orderQty').value)||1000;
+  const errEl=document.getElementById('orderErr');
+  const btn=document.getElementById('orderBtn');
+  errEl.style.display='none';
+  const linkErr=document.getElementById('linkErr');linkErr.style.display='none';
+  if(!sid){errEl.style.display='flex';errEl.innerHTML='⚠️ Please select a service';return;}
+  if(!link){linkErr.style.display='flex';linkErr.textContent='⚠️ Please enter the link/URL';return;}
+  if(!link.startsWith('http')){linkErr.style.display='flex';linkErr.textContent='⚠️ Link must start with http:// or https://';return;}
+  const svc=DB.getServices().find(s=>s.id===sid);
+  if(!svc)return;
+  const actualQty=Math.max(svc.min,Math.min(svc.max,qty));
+  const charge=(actualQty/1000)*svc.price;
+  const user=getUser();
+  if(user.balance<charge){errEl.style.display='flex';errEl.innerHTML=`❌ Insufficient balance. Need ${fmt(charge)}. <a href="#" onclick="go('deposit')" style="margin-left:4px;color:var(--cyan-l)">Add Funds →</a>`;return;}
+  btn.innerHTML='<span class="spinner"></span> Processing...';btn.disabled=true;
+  setTimeout(()=>{
+    const order={id:uid(),userId:user.id,serviceId:sid,link,quantity:actualQty,charge,status:'pending',date:Date.now(),startCount:0,remains:actualQty};
+    const orders=DB.getOrders();orders.push(order);DB.saveOrders(orders);
+    updateUser(user.id,{balance:user.balance-charge,totalOrders:(user.totalOrders||0)+1,totalSpent:(user.totalSpent||0)+charge});
+    toast(`Order placed! 🎉 ${fmt(charge)} deducted`,'success');
+    go('orders');
+  },1000);
+}
+
+// ============================================================
+// MY ORDERS
+// ============================================================
+function renderOrders(){
+  const user=getUser();if(!user)return;
+  const orders=DB.getOrders().filter(o=>o.userId===user.id).reverse();
+  const statuses=['all','pending','processing','completed','cancelled','partial'];
+  dashLayout('orders',`
+<div class="page-hdr"><h2>📦 My Orders</h2><p>${orders.length} total orders</p></div>
+<div class="search-wrap"><i class="fa fa-search"></i><input class="search-input" placeholder="Search by link or ID..." oninput="filterOrders(this.value)"></div>
+<div class="cat-tabs">${statuses.map(s=>`<button class="cat-tab ${s==='all'?'active':''}" onclick="filterOrderStatus('${s}',this)">${s.charAt(0).toUpperCase()+s.slice(1)}</button>`).join('')}</div>
+<div id="ordersTable">${renderOrdersTable(orders)}</div>`);
+  window._allOrders=orders;
+}
+function renderOrdersTable(orders){
+  if(!orders.length)return`<div class="empty-state"><i class="fa fa-inbox"></i><p>No orders found. <a href="#" onclick="go('neworder')">Place your first order!</a></p></div>`;
+  const services=DB.getServices();
+  return`<div class="table-wrap"><table>
+    <thead><tr><th>Order ID</th><th>Service</th><th class="hide-mobile">Link</th><th>Qty</th><th>Charge</th><th>Status</th><th class="hide-mobile">Date</th></tr></thead>
+    <tbody>${orders.map(o=>{
+      const svc=services.find(s=>s.id===o.serviceId)||{name:'Deleted Service'};
+      const progress=o.status==='processing'?Math.floor(Math.random()*60+20):o.status==='completed'?100:0;
+      return`<tr onclick="showOrderDetail('${o.id}')" style="cursor:none;">
+        <td><span style="font-family:monospace;font-size:11px;color:var(--purple-l);">#${o.id.substr(0,8).toUpperCase()}</span></td>
+        <td style="max-width:160px;"><div style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px;">${svc.name}</div>${o.status==='processing'?`<div class="progress-bar"><div class="progress-fill" style="width:${progress}%"></div></div>`:''}
+        </td>
+        <td class="hide-mobile" style="max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"><a href="${o.link}" target="_blank" style="font-size:11px;color:var(--cyan-l);">${o.link.replace(/https?:\/\//,'')}</a></td>
+        <td>${o.quantity.toLocaleString()}</td>
+        <td>${fmt(o.charge)}</td>
+        <td><span class="badge ${o.status}">${o.status}</span></td>
+        <td class="hide-mobile" style="font-size:11px;color:var(--muted);">${fmtDateShort(o.date)}</td>
+      </tr>`;
+    }).join('')}</tbody>
+  </table></div>`;
+}
+function filterOrders(q){
+  const orders=window._allOrders||[];
+  const filtered=q?orders.filter(o=>o.id.toLowerCase().includes(q.toLowerCase())||o.link.toLowerCase().includes(q.toLowerCase())):orders;
+  document.getElementById('ordersTable').innerHTML=renderOrdersTable(filtered);
+}
+function filterOrderStatus(s,btn){
+  document.querySelectorAll('.cat-tab').forEach(t=>t.classList.remove('active'));
+  btn.classList.add('active');
+  const orders=window._allOrders||[];
+  const filtered=s==='all'?orders:orders.filter(o=>o.status===s);
+  document.getElementById('ordersTable').innerHTML=renderOrdersTable(filtered);
+}
+function showOrderDetail(id){
+  const order=DB.getOrders().find(o=>o.id===id);if(!order)return;
+  const svc=DB.getServices().find(s=>s.id===order.serviceId)||{name:'Deleted Service',category:'N/A'};
+  showModal(`
+<div class="modal-title">📦 Order Details</div>
+<div style="display:grid;gap:10px;">
+  ${[
+    ['Order ID',`#${order.id.toUpperCase()}`],
+    ['Service',svc.name],
+    ['Category',svc.category],
+    ['Link',`<a href="${order.link}" target="_blank">${order.link}</a>`],
+    ['Quantity',order.quantity.toLocaleString()],
+    ['Charge',fmt(order.charge)],
+    ['Status',`<span class="badge ${order.status}">${order.status}</span>`],
+    ['Start Count',order.startCount||0],
+    ['Remains',order.remains||0],
+    ['Date',fmtDate(order.date)],
+  ].map(([k,v])=>`<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px;">
+    <span style="color:var(--muted);">${k}</span><span style="font-weight:500;text-align:right;max-width:60%;">${v}</span>
+  </div>`).join('')}
+</div>`);
+}
+
+// ============================================================
+// DEPOSIT
+// ============================================================
+function renderDeposit(){
+  const user=getUser();if(!user)return;
+  const s=DB.getSettings();
+  const deposits=DB.getDeposits().filter(d=>d.userId===user.id).reverse();
+  dashLayout('deposit',`
+<div class="page-hdr"><h2>💳 Add Funds</h2><p>Manual payment only. Funds added after admin approval.</p></div>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px;">
+  <div>
+    <div class="card" style="margin-bottom:16px;">
+      <div class="card-title">💰 Current Balance</div>
+      <div class="card-val cyan">${fmt(user.balance)}</div>
+    </div>
+    <div class="card">
+      <div style="font-size:14px;font-weight:600;margin-bottom:16px;">📤 Submit Deposit Request</div>
+      <div class="form-group">
+        <label>Amount (₹)</label>
+        <div class="input-icon"><i class="fa fa-rupee-sign"></i><input class="form-input" id="depAmt" type="number" min="${s.minDeposit}" max="${s.maxDeposit}" placeholder="Min ₹${s.minDeposit}" oninput="updateDepPreview()"></div>
+        <div style="font-size:11px;color:var(--muted);margin-top:3px;">Min: ₹${s.minDeposit} · Max: ₹${s.maxDeposit.toLocaleString()}</div>
+      </div>
+      <div class="form-group">
+        <label>Payment Method</label>
+        <div id="depMethods">
+          <div class="dep-method sel" id="mUPI" onclick="selDepMethod('UPI')">
+            <div style="display:flex;align-items:center;gap:10px;">
+              <div class="dep-check"></div>
+              <div><div style="font-weight:600;font-size:13px;">📱 UPI Transfer</div>
+              <div style="font-size:12px;color:var(--muted);margin-top:2px;">UPI ID: <strong style="color:var(--cyan-l);">${s.upiId||'Not configured'}</strong></div></div>
+            </div>
+          </div>
+          <div class="dep-method" id="mBank" onclick="selDepMethod('Bank')">
+            <div style="display:flex;align-items:center;gap:10px;">
+              <div class="dep-check"></div>
+              <div><div style="font-weight:600;font-size:13px;">🏦 Bank Transfer</div>
+              <div style="font-size:12px;color:var(--muted);margin-top:2px;">${s.bankName||'Not configured'} · A/C: ${s.bankAcc||'—'}</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Transaction ID / UTR Number</label>
+        <div class="input-icon"><i class="fa fa-hashtag"></i><input class="form-input" id="depTxId" type="text" placeholder="Enter transaction reference ID"></div>
+      </div>
+      <div class="form-group">
+        <label>Notes (optional)</label>
+        <textarea class="form-input" id="depNote" rows="2" placeholder="Any additional details..."></textarea>
+      </div>
+      <div class="alert info"><i class="fa fa-info-circle"></i> After submitting, admin will verify and add funds within 30 mins during business hours.</div>
+      <div id="depErr" class="alert error" style="display:none;"></div>
+      <button class="btn btn-primary btn-full" onclick="submitDeposit()" id="depBtn">💳 Submit Deposit Request</button>
+    </div>
+  </div>
+  <div>
+    <div class="card">
+      <div style="font-size:14px;font-weight:600;margin-bottom:14px;">📜 Deposit History</div>
+      ${deposits.length?`<div class="table-wrap"><table>
+        <thead><tr><th>Amount</th><th>Method</th><th>Status</th><th>Date</th></tr></thead>
+        <tbody>${deposits.map(d=>`<tr>
+          <td style="font-weight:600;color:var(--cyan-l);">${fmt(d.amount)}</td>
+          <td><span style="font-size:12px;">${d.method}</span></td>
+          <td><span class="badge ${d.status}">${d.status}</span></td>
+          <td style="font-size:11px;color:var(--muted);">${fmtDateShort(d.date)}</td>
+        </tr>`).join('')}</tbody>
+      </table></div>`:`<div class="empty-state"><i class="fa fa-receipt"></i><p>No deposits yet</p></div>`}
+    </div>
+  </div>
+</div>`);
+  window._depMethod='UPI';
+}
+function selDepMethod(m){
+  window._depMethod=m;
+  document.getElementById('mUPI').classList.toggle('sel',m==='UPI');
+  document.getElementById('mBank').classList.toggle('sel',m==='Bank');
+}
+function submitDeposit(){
+  const amt=parseFloat(document.getElementById('depAmt').value)||0;
+  const txId=document.getElementById('depTxId').value.trim();
+  const note=document.getElementById('depNote').value.trim();
+  const s=DB.getSettings();
+  const errEl=document.getElementById('depErr');
+  const btn=document.getElementById('depBtn');
+  errEl.style.display='none';
+  if(amt<s.minDeposit||amt>s.maxDeposit){errEl.style.display='flex';errEl.innerHTML=`⚠️ Amount must be between ₹${s.minDeposit} and ₹${s.maxDeposit.toLocaleString()}`;return;}
+  if(!txId){errEl.style.display='flex';errEl.innerHTML='⚠️ Please enter transaction ID';return;}
+  btn.innerHTML='<span class="spinner"></span> Submitting...';btn.disabled=true;
+  setTimeout(()=>{
+    const user=getUser();
+    const dep={id:uid(),userId:user.id,username:user.username,amount:amt,method:window._depMethod||'UPI',txId,note,status:'pending',date:Date.now()};
+    const deps=DB.getDeposits();deps.push(dep);DB.saveDeposits(deps);
+    toast('Deposit request submitted! 🎉 Admin will verify soon.','success');
+    go('deposit');
+  },1000);
+}
+
+// ============================================================
+// PROFILE
+// ============================================================
+function renderProfile(){
+  const user=getUser();if(!user)return;
+  const orders=DB.getOrders().filter(o=>o.userId===user.id);
+  const deposits=DB.getDeposits().filter(d=>d.userId===user.id&&d.status==='approved');
+  dashLayout('profile',`
+<div class="page-hdr"><h2>👤 Profile</h2></div>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;">
+  <div class="card">
+    <div style="text-align:center;margin-bottom:20px;">
+      <div style="width:72px;height:72px;border-radius:20px;background:linear-gradient(135deg,var(--purple-d),var(--cyan-d));display:flex;align-items:center;justify-content:center;font-size:32px;margin:0 auto 12px;">${user.username.charAt(0).toUpperCase()}</div>
+      <div style="font-size:18px;font-weight:700;">@${user.username}</div>
+      <div style="font-size:13px;color:var(--muted);">${user.email}</div>
+      <div style="margin-top:6px;"><span class="badge active">✅ Active</span></div>
+    </div>
+    <hr class="divider">
+    <div style="display:grid;gap:8px;font-size:13px;">
+      <div style="display:flex;justify-content:space-between;"><span style="color:var(--muted);">Balance</span><span style="color:var(--cyan-l);font-weight:600;">${fmt(user.balance)}</span></div>
+      <div style="display:flex;justify-content:space-between;"><span style="color:var(--muted);">Total Orders</span><span>${orders.length}</span></div>
+      <div style="display:flex;justify-content:space-between;"><span style="color:var(--muted);">Total Spent</span><span>${fmt(user.totalSpent||0)}</span></div>
+      <div style="display:flex;justify-content:space-between;"><span style="color:var(--muted);">Member Since</span><span>${fmtDateShort(user.joinDate)}</span></div>
+    </div>
+  </div>
+  <div class="card">
+    <div style="font-size:14px;font-weight:600;margin-bottom:16px;">🔒 Change Password</div>
+    <div class="form-group"><label>Current Password</label><input class="form-input" id="cpCur" type="password" placeholder="Current password"></div>
+    <div class="form-group"><label>New Password</label><input class="form-input" id="cpNew" type="password" placeholder="New password" oninput="checkPW(this)">
+    <div class="pw-strength"><div class="pw-bar" id="pwBar" style="width:0%"></div></div></div>
+    <div id="cpErr" class="field-error" style="display:none;"></div>
+    <button class="btn btn-primary btn-full" onclick="changePassword()">🔒 Update Password</button>
+  </div>
+</div>`);
+}
+function changePassword(){
+  const cur=document.getElementById('cpCur').value;
+  const nw=document.getElementById('cpNew').value;
+  const errEl=document.getElementById('cpErr');
+  errEl.style.display='none';
+  const user=getUser();
+  if(user.password!==cur){errEl.style.display='flex';errEl.textContent='❌ Current password incorrect';return;}
+  const v=validatePassword(nw);
+  if(!v.len||!v.upper||!v.lower||!v.num||!v.special){errEl.style.display='flex';errEl.textContent='⚠️ New password too weak (8+ chars, upper, lower, 2 numbers, special)';return;}
+  updateUser(user.id,{password:nw});
+  toast('Password updated! 🔐','success');
+}
+
+// ============================================================
+// ADMIN ROUTER
+// ============================================================
+function renderAdminRouter(hash){
+  document.getElementById('navbar').style.display='none';
+  const adminSess=DB.adminSession();
+  if(hash==='admin'&&!adminSess){renderAdminLogin();return;}
+  if(!adminSess&&hash!=='admin'){renderAdminLogin();return;}
+  const sub=hash.replace('admin/','').replace('admin','');
+  renderAdminPanel(sub||'dashboard');
+}
+function renderAdminLogin(){
+  document.getElementById('app').innerHTML=`
+<div class="admin-login">
+  <div class="auth-box" style="max-width:380px;">
+    <h2>🔐 Admin Panel</h2>
+    <p class="sub">My SocialPanel Administration</p>
+    <div class="form-group">
+      <label>Admin Username</label>
+      <div class="input-icon"><i class="fa fa-user-shield"></i><input class="form-input" id="adUser" type="text" placeholder="Admin username" autocomplete="off"></div>
+    </div>
+    <div class="form-group">
+      <label>Password</label>
+      <div class="input-icon"><i class="fa fa-lock"></i><input class="form-input" id="adPW" type="password" placeholder="Admin password" autocomplete="off">
+      <i class="fa fa-eye" id="adEye" style="left:auto;right:12px;cursor:none;" onclick="toggleEye('adPW','adEye')"></i></div>
+    </div>
+    <div id="adErr" class="alert error" style="display:none;"></div>
+    <button class="btn btn-primary btn-full" onclick="doAdminLogin()">🔐 Admin Login</button>
+    <div style="text-align:center;margin-top:12px;"><a href="#home" style="color:var(--muted);font-size:12px;">← Back to Site</a></div>
+  </div>
+</div>`;
+  document.getElementById('adPW').addEventListener('keydown',e=>{if(e.key==='Enter')doAdminLogin();});
+}
+function doAdminLogin(){
+  const u=document.getElementById('adUser').value.trim();
+  const p=document.getElementById('adPW').value;
+  const errEl=document.getElementById('adErr');
+  const btn=event.target;
+  btn.innerHTML='<span class="spinner"></span>';btn.disabled=true;
+  setTimeout(()=>{
+    if(u===ADMIN_CREDS.username&&p===ADMIN_CREDS.password){
+      DB.saveAdminSession({username:u,loginTime:Date.now()});
+      renderAdminPanel('dashboard');
+    } else {
+      errEl.style.display='flex';errEl.innerHTML='❌ Invalid admin credentials';
+      btn.innerHTML='🔐 Admin Login';btn.disabled=false;
+    }
+  },800);
+}
+
+// ============================================================
+// ADMIN PANEL
+// ============================================================
+function adminNav(active){
+  const items=[
+    {id:'dashboard',emoji:'📊',label:'Dashboard'},
+    {id:'users',emoji:'👥',label:'Users'},
+    {id:'services',emoji:'⚡',label:'Services'},
+    {id:'providers',emoji:'🔗',label:'API Providers'},
+    {id:'orders',emoji:'📦',label:'Orders'},
+    {id:'deposits',emoji:'💳',label:'Deposits'},
+    {id:'settings',emoji:'⚙️',label:'Settings'},
+  ];
+  return`<div class="admin-sidebar" id="adminSidebar">
+    <div class="admin-logo"><span>⚡ My SocialPanel</span><small>Admin Panel</small></div>
+    <div style="padding:0 10px;">
+      ${items.map(i=>`<button class="nav-item ${i.id===active?'active':''}" onclick="renderAdminPanel('${i.id}')">${i.emoji} ${i.label}</button>`).join('')}
+      <hr class="divider">
+      <button class="nav-item" onclick="adminLogout()">🚪 Logout</button>
+      <button class="nav-item" onclick="window.location.hash='home'">🌐 View Site</button>
+    </div>
+  </div>`;
+}
+function adminLogout(){DB.clearAdminSession();renderAdminLogin();}
+
+function renderAdminPanel(section){
+  const s=section||'dashboard';
+  const fns={
+    dashboard:renderAdminDash,users:renderAdminUsers,services:renderAdminServices,
+    providers:renderAdminProviders,orders:renderAdminOrders,deposits:renderAdminDeposits,settings:renderAdminSettings
+  };
+  document.getElementById('app').innerHTML=`
+<div class="admin-layout">
+  ${adminNav(s)}
+  <div class="admin-content" id="adminContent"></div>
+</div>`;
+  (fns[s]||renderAdminDash)();
+}
+
+function renderAdminDash(){
+  const users=DB.getUsers();const orders=DB.getOrders();const deposits=DB.getDeposits();const services=DB.getServices();
+  const totalRev=deposits.filter(d=>d.status==='approved').reduce((a,d)=>a+d.amount,0);
+  const pendDeps=deposits.filter(d=>d.status==='pending').length;
+  const pendOrds=orders.filter(o=>o.status==='pending').length;
+  const recentOrders=orders.slice(-8).reverse();
+  const recentDeps=deposits.slice(-5).reverse();
+  document.getElementById('adminContent').innerHTML=`
+<div class="admin-header"><div class="admin-title">📊 Dashboard</div><div style="font-size:12px;color:var(--muted);">${new Date().toLocaleString('en-IN')}</div></div>
+<div class="stats-row" style="grid-template-columns:repeat(auto-fit,minmax(160px,1fr));">
+  <div class="card"><div class="card-title">👥 Total Users</div><div class="card-val purple">${users.length}</div></div>
+  <div class="card"><div class="card-title">📦 Total Orders</div><div class="card-val cyan">${orders.length}</div></div>
+  <div class="card"><div class="card-title">💰 Total Revenue</div><div class="card-val green">${fmt(totalRev)}</div></div>
+  <div class="card"><div class="card-title">⚡ Services</div><div class="card-val purple">${services.filter(s=>s.status==='active').length}</div></div>
+  <div class="card"><div class="card-title">⏳ Pending Orders</div><div class="card-val yellow">${pendOrds}</div></div>
+  <div class="card"><div class="card-title">💳 Pending Deposits</div><div class="card-val yellow">${pendDeps}</div></div>
+</div>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px;">
+  <div class="card">
+    <div style="font-weight:600;font-size:14px;margin-bottom:12px;">📦 Recent Orders</div>
+    ${recentOrders.length?`<div class="table-wrap"><table><thead><tr><th>User</th><th>Service</th><th>Charge</th><th>Status</th></tr></thead>
+    <tbody>${recentOrders.map(o=>{const u=users.find(u=>u.id===o.userId)||{username:'?'};const sv=services.find(s=>s.id===o.serviceId)||{name:'?'};
+    return`<tr><td>@${u.username}</td><td style="max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px;">${sv.name}</td><td>${fmt(o.charge)}</td>
+    <td><span class="badge ${o.status}">${o.status}</span></td></tr>`;}).join('')}</tbody></table></div>`:`<div class="empty-state"><i class="fa fa-inbox"></i><p>No orders yet</p></div>`}
+  </div>
+  <div class="card">
+    <div style="font-weight:600;font-size:14px;margin-bottom:12px;">💳 Pending Deposits</div>
+    ${recentDeps.filter(d=>d.status==='pending').length?`<div class="table-wrap"><table><thead><tr><th>User</th><th>Amount</th><th>Method</th><th>Action</th></tr></thead>
+    <tbody>${recentDeps.filter(d=>d.status==='pending').map(d=>`<tr>
+    <td>@${d.username}</td><td style="color:var(--cyan-l);font-weight:600;">${fmt(d.amount)}</td><td>${d.method}</td>
+    <td class="action-btns"><button class="btn-sm btn-green" onclick="approveDeposit('${d.id}')">✅</button><button class="btn-sm btn-red" onclick="rejectDeposit('${d.id}')">❌</button></td>
+    </tr>`).join('')}</tbody></table></div>`:`<div class="empty-state"><i class="fa fa-check-circle"></i><p>No pending deposits</p></div>`}
+  </div>
+</div>`;
+}
+
+function renderAdminUsers(){
+  const users=DB.getUsers();
+  document.getElementById('adminContent').innerHTML=`
+<div class="admin-header"><div class="admin-title">👥 Manage Users (${users.length})</div>
+<button class="btn btn-primary btn-sm" onclick="showAddBalModal()">💰 Add Balance</button></div>
+<div class="search-wrap"><i class="fa fa-search"></i><input class="search-input" placeholder="Search users..." oninput="filterAdminUsers(this.value)"></div>
+<div class="table-wrap" id="adminUsersTable">${renderUsersTable(users)}</div>`;
+  window._adminUsers=users;
+}
+function renderUsersTable(users){
+  if(!users.length)return`<div class="empty-state"><i class="fa fa-users"></i><p>No users yet</p></div>`;
+  const orders=DB.getOrders();
+  return`<table><thead><tr><th>Username</th><th>Email</th><th>Balance</th><th class="hide-mobile">Orders</th><th class="hide-mobile">Joined</th><th>Status</th><th>Actions</th></tr></thead>
+  <tbody>${users.map(u=>`<tr>
+    <td><strong>@${u.username}</strong></td>
+    <td style="font-size:12px;">${u.email}</td>
+    <td style="color:var(--cyan-l);font-weight:600;">${fmt(u.balance)}</td>
+    <td class="hide-mobile">${orders.filter(o=>o.userId===u.id).length}</td>
+    <td class="hide-mobile" style="font-size:11px;color:var(--muted);">${fmtDateShort(u.joinDate)}</td>
+    <td><span class="badge ${u.blocked?'cancelled':'active'}">${u.blocked?'Blocked':'Active'}</span></td>
+    <td class="action-btns">
+      <button class="btn-sm btn-cyan" onclick="showEditBalModal('${u.id}','${u.username}',${u.balance})">💰</button>
+      <button class="btn-sm ${u.blocked?'btn-green':'btn-yellow'}" onclick="toggleUserBlock('${u.id}')">${u.blocked?'✅':'🚫'}</button>
+    </td>
+  </tr>`).join('')}</tbody></table>`;
+}
+function filterAdminUsers(q){
+  const users=window._adminUsers||[];
+  const f=q?users.filter(u=>u.username.includes(q)||u.email.includes(q)):users;
+  document.getElementById('adminUsersTable').innerHTML=renderUsersTable(f);
+}
+function toggleUserBlock(id){
+  const users=DB.getUsers();const i=users.findIndex(u=>u.id===id);
+  if(i>=0){users[i].blocked=!users[i].blocked;DB.saveUsers(users);}
+  renderAdminUsers();toast(users.find(u=>u.id===id)?.blocked?'User blocked 🚫':'User unblocked ✅','info');
+}
+function showEditBalModal(id,name,cur){
+  showModal(`
+<div class="modal-title">💰 Edit Balance — @${name}</div>
+<div class="form-group"><label>Current Balance</label><input class="form-input" value="${fmt(cur)}" disabled></div>
+<div class="form-group"><label>Action</label>
+<select class="select-input" id="balAction"><option value="set">Set Balance</option><option value="add">Add Amount</option><option value="sub">Subtract Amount</option></select></div>
+<div class="form-group"><label>Amount (₹)</label><input class="form-input" id="balAmt" type="number" placeholder="Enter amount" min="0"></div>
+<div class="form-group"><label>Note (optional)</label><input class="form-input" id="balNote" type="text" placeholder="Reason..."></div>
+<div id="balErr" class="field-error" style="display:none;"></div>
+<button class="btn btn-primary btn-full" onclick="updateUserBalance('${id}')">💰 Update Balance</button>`);
+}
+function updateUserBalance(id){
+  const action=document.getElementById('balAction').value;
+  const amt=parseFloat(document.getElementById('balAmt').value)||0;
+  if(amt<0){document.getElementById('balErr').style.display='flex';document.getElementById('balErr').textContent='Amount must be positive';return;}
+  const users=DB.getUsers();const i=users.findIndex(u=>u.id===id);
+  if(i>=0){
+    if(action==='set')users[i].balance=amt;
+    else if(action==='add')users[i].balance+=amt;
+    else if(action==='sub')users[i].balance=Math.max(0,users[i].balance-amt);
+    DB.saveUsers(users);
+  }
+  closeModal();renderAdminUsers();toast('Balance updated! 💰','success');
+}
+
+function renderAdminServices(){
+  const services=DB.getServices();
+  document.getElementById('adminContent').innerHTML=`
+<div class="admin-header"><div class="admin-title">⚡ Services (${services.length})</div>
+<button class="btn btn-primary btn-sm" onclick="showAddServiceModal()">➕ Add Service</button></div>
+<div class="search-wrap"><i class="fa fa-search"></i><input class="search-input" placeholder="Search services..." oninput="filterAdminServices(this.value)"></div>
+<div class="table-wrap" id="adminServicesTable">${renderAdminServicesTable(services)}</div>`;
+  window._adminServices=services;
+}
+function renderAdminServicesTable(services){
+  if(!services.length)return`<div class="empty-state"><i class="fa fa-th"></i><p>No services. Add one!</p></div>`;
+  return`<table><thead><tr><th>ID</th><th>Name</th><th>Category</th><th>Price/1k</th><th>Min</th><th>Max</th><th>Status</th><th>Actions</th></tr></thead>
+  <tbody>${services.map(s=>`<tr>
+    <td style="font-family:monospace;font-size:11px;color:var(--muted);">${s.id}</td>
+    <td style="max-width:180px;font-size:12px;">${s.name}</td>
+    <td>${platformIcon(s.category)} ${s.category}</td>
+    <td style="color:var(--cyan-l);font-weight:600;">₹${s.price}</td>
+    <td>${s.min.toLocaleString()}</td>
+    <td>${s.max.toLocaleString()}</td>
+    <td><span class="badge ${s.status==='active'?'active':'cancelled'}">${s.status}</span></td>
+    <td class="action-btns">
+      <button class="btn-sm btn-cyan" onclick="showEditServiceModal('${s.id}')">✏️</button>
+      <button class="btn-sm ${s.status==='active'?'btn-yellow':'btn-green'}" onclick="toggleService('${s.id}')">${s.status==='active'?'⏸️':'▶️'}</button>
+      <button class="btn-sm btn-red" onclick="deleteService('${s.id}')">🗑️</button>
+    </td>
+  </tr>`).join('')}</tbody></table>`;
+}
+function filterAdminServices(q){
+  const services=window._adminServices||[];
+  const f=q?services.filter(s=>s.name.toLowerCase().includes(q.toLowerCase())||s.category.toLowerCase().includes(q.toLowerCase())):services;
+  document.getElementById('adminServicesTable').innerHTML=renderAdminServicesTable(f);
+}
+function serviceFormHTML(s={}){
+  const cats=['Instagram','Facebook','YouTube','TikTok','Twitter','Telegram','Snapchat','LinkedIn','Pinterest','Other'];
+  const providers=DB.getProviders();
+  return`
+<div class="form-row">
+  <div class="form-group"><label>Category</label>
+  <select class="select-input" id="sf_cat">${cats.map(c=>`<option value="${c}" ${s.category===c?'selected':''}>${platformIcon(c)} ${c}</option>`).join('')}</select></div>
+  <div class="form-group"><label>Type</label>
+  <select class="select-input" id="sf_type"><option value="Default" ${s.type==='Default'?'selected':''}>Default</option><option value="Custom Comments" ${s.type==='Custom Comments'?'selected':''}>Custom Comments</option><option value="Mentions" ${s.type==='Mentions'?'selected':''}>Mentions</option></select></div>
+</div>
+<div class="form-group"><label>Service Name</label><input class="form-input" id="sf_name" type="text" value="${s.name||''}" placeholder="e.g. Instagram Followers [Real HQ]"></div>
+<div class="form-group"><label>Description</label><textarea class="form-input" id="sf_desc" rows="2">${s.description||''}</textarea></div>
+<div class="form-row">
+  <div class="form-group"><label>Price per 1000 (₹)</label><input class="form-input" id="sf_price" type="number" value="${s.price||10}" min="0.01" step="0.01"></div>
+  <div class="form-group"><label>Min Order</label><input class="form-input" id="sf_min" type="number" value="${s.min||100}"></div>
+</div>
+<div class="form-row">
+  <div class="form-group"><label>Max Order</label><input class="form-input" id="sf_max" type="number" value="${s.max||100000}"></div>
+  <div class="form-group"><label>Status</label>
+  <select class="select-input" id="sf_status"><option value="active" ${s.status!=='inactive'?'selected':''}>✅ Active</option><option value="inactive" ${s.status==='inactive'?'selected':''}>⏸️ Inactive</option></select></div>
+</div>
+${providers.length?`<div class="form-row">
+  <div class="form-group"><label>API Provider (optional)</label>
+  <select class="select-input" id="sf_prov" onchange="updateAPIServiceId()"><option value="">-- None (Manual) --</option>
+  ${providers.map(p=>`<option value="${p.id}" ${s.apiProvider===p.id?'selected':''}>${p.name}</option>`).join('')}</select></div>
+  <div class="form-group"><label>Provider Service ID</label><input class="form-input" id="sf_apiid" type="text" value="${s.apiServiceId||''}" placeholder="e.g. 123"></div>
+</div>`:''}`;
+}
+function showAddServiceModal(){
+  showModal(`<div class="modal-title">➕ Add New Service</div>${serviceFormHTML()}<div id="sfErr" class="field-error" style="display:none;"></div>
+<button class="btn btn-primary btn-full" style="margin-top:12px;" onclick="saveService()">✅ Add Service</button>`);
+}
+function showEditServiceModal(id){
+  const s=DB.getServices().find(sv=>sv.id===id);if(!s)return;
+  showModal(`<div class="modal-title">✏️ Edit Service</div>${serviceFormHTML(s)}<div id="sfErr" class="field-error" style="display:none;"></div>
+<button class="btn btn-primary btn-full" style="margin-top:12px;" onclick="saveService('${id}')">💾 Save Changes</button>`);
+}
+function saveService(editId){
+  const name=document.getElementById('sf_name').value.trim();
+  const price=parseFloat(document.getElementById('sf_price').value)||0;
+  const min=parseInt(document.getElementById('sf_min').value)||100;
+  const max=parseInt(document.getElementById('sf_max').value)||100000;
+  const errEl=document.getElementById('sfErr');
+  if(!name){errEl.style.display='flex';errEl.textContent='⚠️ Service name required';return;}
+  if(price<=0){errEl.style.display='flex';errEl.textContent='⚠️ Price must be positive';return;}
+  const services=DB.getServices();
+  const svc={
+    id:editId||uid(),
+    category:document.getElementById('sf_cat').value,
+    type:document.getElementById('sf_type').value,
+    name,
+    description:document.getElementById('sf_desc').value,
+    price,min,max,
+    status:document.getElementById('sf_status').value,
+    apiProvider:document.getElementById('sf_prov')?document.getElementById('sf_prov').value:'',
+    apiServiceId:document.getElementById('sf_apiid')?document.getElementById('sf_apiid').value:'',
+  };
+  if(editId){const i=services.findIndex(s=>s.id===editId);if(i>=0)services[i]=svc;}
+  else services.push(svc);
+  DB.saveServices(services);closeModal();renderAdminServices();
+  toast(editId?'Service updated! ✅':'Service added! ✅','success');
+}
+function toggleService(id){
+  const services=DB.getServices();const i=services.findIndex(s=>s.id===id);
+  if(i>=0)services[i].status=services[i].status==='active'?'inactive':'active';
+  DB.saveServices(services);renderAdminServices();
+  toast('Service status updated','info');
+}
+function deleteService(id){
+  if(!confirm('Delete this service?'))return;
+  DB.saveServices(DB.getServices().filter(s=>s.id!==id));
+  renderAdminServices();toast('Service deleted 🗑️','info');
+}
+
+function renderAdminProviders(){
+  const providers=DB.getProviders();
+  document.getElementById('adminContent').innerHTML=`
+<div class="admin-header"><div class="admin-title">🔗 API Providers (${providers.length})</div>
+<button class="btn btn-primary btn-sm" onclick="showAddProviderModal()">➕ Add Provider</button></div>
+<div class="alert info"><i class="fa fa-info-circle"></i> Add API providers from other SMM panels. Services are fetched via standard SMM API (action=services). Prices can be customized per service.</div>
+${providers.length?`<div class="table-wrap"><table><thead><tr><th>Name</th><th>API URL</th><th>Balance</th><th>Services</th><th>Status</th><th>Actions</th></tr></thead>
+<tbody>${providers.map(p=>`<tr>
+  <td><strong>${p.name}</strong></td>
+  <td style="font-size:11px;color:var(--muted);max-width:180px;overflow:hidden;text-overflow:ellipsis;">${p.apiUrl}</td>
+  <td style="color:var(--cyan-l);">${p.balance||'—'}</td>
+  <td>${p.serviceCount||0} imported</td>
+  <td><span class="badge ${p.status==='active'?'active':'cancelled'}">${p.status}</span></td>
+  <td class="action-btns">
+    <button class="btn-sm btn-cyan" onclick="fetchProviderServices('${p.id}')">🔄 Fetch</button>
+    <button class="btn-sm btn-yellow" onclick="showEditProviderModal('${p.id}')">✏️</button>
+    <button class="btn-sm btn-red" onclick="deleteProvider('${p.id}')">🗑️</button>
+  </td>
+</tr>`).join('')}</tbody></table></div>`:`<div class="empty-state"><i class="fa fa-plug"></i><p>No API providers yet. Add one to import services automatically!</p></div>`}`;
+}
+function providerFormHTML(p={}){
+  return`
+<div class="form-group"><label>Provider Name</label><input class="form-input" id="pf_name" type="text" value="${p.name||''}" placeholder="e.g. SMM Panel Pro"></div>
+<div class="form-group"><label>API URL</label><input class="form-input" id="pf_url" type="url" value="${p.apiUrl||''}" placeholder="https://provider.com/api/v2"></div>
+<div class="form-group"><label>API Key</label><input class="form-input" id="pf_key" type="text" value="${p.apiKey||''}" placeholder="Your API key from provider"></div>
+<div class="form-group"><label>Price Markup</label>
+<div style="display:flex;gap:10px;align-items:center;">
+  <select class="select-input" id="pf_markupType" style="max-width:120px;">
+    <option value="percentage" ${p.markupType!=='fixed'?'selected':''}>% Percentage</option>
+    <option value="fixed" ${p.markupType==='fixed'?'selected':''}>₹ Fixed Add</option>
+  </select>
+  <input class="form-input" id="pf_markup" type="number" value="${p.markup||30}" placeholder="e.g. 30 = 30% markup" min="0">
+</div>
+<div style="font-size:11px;color:var(--muted);margin-top:4px;">Markup applied to all imported service prices (e.g. 30% means your cost × 1.30)</div>
+</div>`;
+}
+function showAddProviderModal(){
+  showModal(`<div class="modal-title">➕ Add API Provider</div>${providerFormHTML()}<div id="pfErr" class="field-error" style="display:none;"></div>
+<button class="btn btn-primary btn-full" style="margin-top:12px;" onclick="saveProvider()">✅ Add Provider</button>`);
+}
+function showEditProviderModal(id){
+  const p=DB.getProviders().find(x=>x.id===id);if(!p)return;
+  showModal(`<div class="modal-title">✏️ Edit Provider</div>${providerFormHTML(p)}<div id="pfErr" class="field-error" style="display:none;"></div>
+<button class="btn btn-primary btn-full" style="margin-top:12px;" onclick="saveProvider('${id}')">💾 Save</button>`);
+}
+function saveProvider(editId){
+  const name=document.getElementById('pf_name').value.trim();
+  const url=document.getElementById('pf_url').value.trim();
+  const key=document.getElementById('pf_key').value.trim();
+  const markupType=document.getElementById('pf_markupType').value;
+  const markup=parseFloat(document.getElementById('pf_markup').value)||30;
+  const errEl=document.getElementById('pfErr');
+  if(!name||!url||!key){errEl.style.display='flex';errEl.textContent='⚠️ All fields are required';return;}
+  const providers=DB.getProviders();
+  const prov={id:editId||uid(),name,apiUrl:url,apiKey:key,markupType,markup,status:'active',balance:'—',serviceCount:0};
+  if(editId){const i=providers.findIndex(p=>p.id===editId);if(i>=0)providers[i]={...providers[i],...prov};}
+  else providers.push(prov);
+  DB.saveProviders(providers);closeModal();renderAdminProviders();
+  toast(editId?'Provider updated! ✅':'Provider added! ✅','success');
+}
+function fetchProviderServices(id){
+  const p=DB.getProviders().find(x=>x.id===id);if(!p)return;
+  toast('Fetching services from '+p.name+'... 🔄','info');
+  // Try to fetch real API — standard SMM panel API format
+  const body=new URLSearchParams({key:p.apiKey,action:'services'});
+  fetch(p.apiUrl,{method:'POST',body,headers:{'Content-Type':'application/x-www-form-urlencoded'}})
+  .then(r=>r.json())
+  .then(data=>{
+    if(!Array.isArray(data)){toast('Invalid API response ❌ — Check API URL/key','error');return;}
+    let imported=0;const services=DB.getServices();
+    const markup=p.markupType==='percentage'?p.markup/100:0;
+    const markupFixed=p.markupType==='fixed'?p.markup:0;
+    data.forEach(item=>{
+      const exists=services.find(s=>s.apiProvider===id&&s.apiServiceId===String(item.service));
+      const price=parseFloat(item.rate)||1;
+      const myPrice=p.markupType==='percentage'?price*(1+markup):price+markupFixed;
+      const svc={
+        id:exists?exists.id:uid(),
+        category:item.category||'Other',
+        name:item.name||`Service #${item.service}`,
+        description:item.description||item.name||'',
+        price:Math.round(myPrice*100)/100,
+        min:parseInt(item.min)||100,
+        max:parseInt(item.max)||100000,
+        type:item.type||'Default',
+        status:'active',
+        apiProvider:id,
+        apiServiceId:String(item.service),
+      };
+      if(exists){const i=services.findIndex(s=>s.id===exists.id);services[i]=svc;}
+      else{services.push(svc);imported++;}
+    });
+    DB.saveServices(services);
+    // Update provider serviceCount
+    const providers=DB.getProviders();const pi=providers.findIndex(x=>x.id===id);
+    if(pi>=0){providers[pi].serviceCount=data.length;}DB.saveProviders(providers);
+    toast(`✅ Fetched ${data.length} services, ${imported} new added!`,'success');
+    renderAdminProviders();
+  })
+  .catch(err=>{toast(`❌ API Error: ${err.message}. Check CORS / API URL.`,'error',5000);});
+}
+function deleteProvider(id){
+  if(!confirm('Delete this provider? Linked services will remain.'))return;
+  DB.saveProviders(DB.getProviders().filter(p=>p.id!==id));
+  renderAdminProviders();toast('Provider deleted 🗑️','info');
+}
+
+function renderAdminOrders(){
+  const orders=DB.getOrders().slice().reverse();
+  const users=DB.getUsers();const services=DB.getServices();
+  document.getElementById('adminContent').innerHTML=`
+<div class="admin-header"><div class="admin-title">📦 All Orders (${orders.length})</div></div>
+<div class="search-wrap"><i class="fa fa-search"></i><input class="search-input" placeholder="Search by user or ID..." oninput="filterAdminOrders(this.value)"></div>
+<div class="cat-tabs">${['all','pending','processing','completed','cancelled'].map(s=>`<button class="cat-tab ${s==='all'?'active':''}" onclick="filterAdminOrderStatus('${s}',this)">${s.charAt(0).toUpperCase()+s.slice(1)}</button>`).join('')}</div>
+<div class="table-wrap" id="adminOrdersTable">${renderAdminOrdersTable(orders,users,services)}</div>`;
+  window._adminOrders=orders;window._adminOrderUsers=users;window._adminOrderSvcs=services;
+}
+function renderAdminOrdersTable(orders,users,services){
+  if(!orders.length)return`<div class="empty-state"><i class="fa fa-inbox"></i><p>No orders</p></div>`;
+  return`<table><thead><tr><th>ID</th><th>User</th><th>Service</th><th class="hide-mobile">Qty</th><th>Charge</th><th>Status</th><th>Update</th></tr></thead>
+  <tbody>${orders.map(o=>{
+    const u=users.find(u=>u.id===o.userId)||{username:'?'};
+    const sv=services.find(s=>s.id===o.serviceId)||{name:'?'};
+    return`<tr>
+      <td style="font-family:monospace;font-size:11px;">#${o.id.substr(0,6).toUpperCase()}</td>
+      <td>@${u.username}</td>
+      <td style="max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px;">${sv.name}</td>
+      <td class="hide-mobile">${o.quantity.toLocaleString()}</td>
+      <td>${fmt(o.charge)}</td>
+      <td><span class="badge ${o.status}">${o.status}</span></td>
+      <td><select class="select-input" style="padding:4px 8px;font-size:11px;min-width:100px;" onchange="updateOrderStatus('${o.id}',this.value)">
+        ${['pending','processing','completed','cancelled','partial'].map(s=>`<option value="${s}" ${o.status===s?'selected':''}>${s}</option>`).join('')}
+      </select></td>
+    </tr>`;}).join('')}</tbody></table>`;
+}
+function filterAdminOrders(q){
+  const orders=window._adminOrders||[];const users=window._adminOrderUsers||[];const svcs=window._adminOrderSvcs||[];
+  const filtered=q?orders.filter(o=>{const u=users.find(u=>u.id===o.userId)||{username:''};return u.username.includes(q)||o.id.includes(q);}):orders;
+  document.getElementById('adminOrdersTable').innerHTML=renderAdminOrdersTable(filtered,users,svcs);
+}
+function filterAdminOrderStatus(s,btn){
+  document.querySelectorAll('.cat-tab').forEach(t=>t.classList.remove('active'));btn.classList.add('active');
+  const orders=window._adminOrders||[];const users=window._adminOrderUsers||[];const svcs=window._adminOrderSvcs||[];
+  const filtered=s==='all'?orders:orders.filter(o=>o.status===s);
+  document.getElementById('adminOrdersTable').innerHTML=renderAdminOrdersTable(filtered,users,svcs);
+}
+function updateOrderStatus(id,status){
+  const orders=DB.getOrders();const i=orders.findIndex(o=>o.id===id);
+  if(i>=0){orders[i].status=status;DB.saveOrders(orders);}
+  toast(`Order status → ${status} ✅`,'success');
+}
+
+function renderAdminDeposits(){
+  const deposits=DB.getDeposits().slice().reverse();
+  document.getElementById('adminContent').innerHTML=`
+<div class="admin-header"><div class="admin-title">💳 Deposits (${deposits.length})</div></div>
+<div class="cat-tabs">${['all','pending','approved','rejected'].map(s=>`<button class="cat-tab ${s==='all'?'active':''}" onclick="filterAdminDeposits('${s}',this)">${s.charAt(0).toUpperCase()+s.slice(1)}</button>`).join('')}</div>
+<div class="table-wrap" id="adminDepositsTable">${renderAdminDepositsTable(deposits)}</div>`;
+  window._adminDeposits=deposits;
+}
+function renderAdminDepositsTable(deposits){
+  if(!deposits.length)return`<div class="empty-state"><i class="fa fa-wallet"></i><p>No deposits</p></div>`;
+  return`<table><thead><tr><th>User</th><th>Amount</th><th>Method</th><th>Tx ID</th><th class="hide-mobile">Date</th><th>Status</th><th>Actions</th></tr></thead>
+  <tbody>${deposits.map(d=>`<tr>
+    <td>@${d.username}</td>
+    <td style="color:var(--cyan-l);font-weight:600;font-family:Orbitron,monospace;font-size:13px;">${fmt(d.amount)}</td>
+    <td><span style="font-size:12px;">${d.method}</span></td>
+    <td style="font-family:monospace;font-size:11px;color:var(--muted);">${d.txId||'—'}</td>
+    <td class="hide-mobile" style="font-size:11px;color:var(--muted);">${fmtDateShort(d.date)}</td>
+    <td><span class="badge ${d.status}">${d.status}</span></td>
+    <td class="action-btns">
+      ${d.status==='pending'?`<button class="btn-sm btn-green" onclick="approveDeposit('${d.id}')">✅ Approve</button>
+      <button class="btn-sm btn-red" onclick="rejectDeposit('${d.id}')">❌ Reject</button>`:'<span style="font-size:12px;color:var(--muted);">Done</span>'}
+    </td>
+  </tr>`).join('')}</tbody></table>`;
+}
+function filterAdminDeposits(s,btn){
+  document.querySelectorAll('.cat-tab').forEach(t=>t.classList.remove('active'));btn.classList.add('active');
+  const deps=window._adminDeposits||[];
+  const f=s==='all'?deps:deps.filter(d=>d.status===s);
+  document.getElementById('adminDepositsTable').innerHTML=renderAdminDepositsTable(f);
+}
+function approveDeposit(id){
+  const deps=DB.getDeposits();const i=deps.findIndex(d=>d.id===id);if(i<0)return;
+  if(deps[i].status==='approved'){toast('Already approved','warn');return;}
+  deps[i].status='approved';
+  const users=DB.getUsers();const ui=users.findIndex(u=>u.id===deps[i].userId);
+  if(ui>=0){users[ui].balance+=deps[i].amount;DB.saveUsers(users);}
+  DB.saveDeposits(deps);
+  toast(`✅ Deposit of ${fmt(deps[i].amount)} approved! Balance added to @${deps[i].username}`,'success');
+  renderAdminDeposits();
+}
+function rejectDeposit(id){
+  const deps=DB.getDeposits();const i=deps.findIndex(d=>d.id===id);if(i<0)return;
+  deps[i].status='rejected';DB.saveDeposits(deps);
+  toast('Deposit rejected ❌','info');renderAdminDeposits();
+}
+
+function renderAdminSettings(){
+  const s=DB.getSettings();
+  document.getElementById('adminContent').innerHTML=`
+<div class="admin-header"><div class="admin-title">⚙️ Settings</div></div>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px;">
+  <div class="card">
+    <div style="font-weight:600;font-size:14px;margin-bottom:16px;">🌐 General Settings</div>
+    <div class="form-group"><label>Site Name</label><input class="form-input" id="ss_name" value="${s.siteName}" type="text"></div>
+    <div class="form-row">
+      <div class="form-group"><label>Currency Name</label><input class="form-input" id="ss_curr" value="${s.currency}" type="text"></div>
+      <div class="form-group"><label>Currency Symbol</label><input class="form-input" id="ss_sym" value="${s.currSymbol||'₹'}" type="text"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Min Deposit (₹)</label><input class="form-input" id="ss_mind" value="${s.minDeposit}" type="number"></div>
+      <div class="form-group"><label>Max Deposit (₹)</label><input class="form-input" id="ss_maxd" value="${s.maxDeposit}" type="number"></div>
+    </div>
+    <div class="form-group"><label>📢 Announcement Text</label><input class="form-input" id="ss_ann" value="${s.announcementText||''}" placeholder="Leave empty to hide" type="text"></div>
+  </div>
+  <div class="card">
+    <div style="font-weight:600;font-size:14px;margin-bottom:16px;">💳 Payment Settings</div>
+    <div class="form-group"><label>📱 UPI ID</label><input class="form-input" id="ss_upi" value="${s.upiId||''}" placeholder="yourname@upi" type="text"></div>
+    <div class="form-group"><label>🏦 Bank Name</label><input class="form-input" id="ss_bname" value="${s.bankName||''}" type="text"></div>
+    <div class="form-group"><label>Account Number</label><input class="form-input" id="ss_bacc" value="${s.bankAcc||''}" type="text"></div>
+    <div class="form-group"><label>IFSC Code</label><input class="form-input" id="ss_ifsc" value="${s.bankIFSC||''}" type="text"></div>
+    <div class="form-group"><label>Account Holder Name</label><input class="form-input" id="ss_holder" value="${s.bankHolder||''}" type="text"></div>
+  </div>
+</div>
+<div style="margin-top:16px;">
+  <button class="btn btn-primary" onclick="saveSettings()">💾 Save All Settings</button>
+</div>
+<div class="card" style="margin-top:20px;">
+  <div style="font-weight:600;font-size:14px;margin-bottom:12px;">🔧 Danger Zone</div>
+  <div class="alert warn"><i class="fa fa-exclamation-triangle"></i> These actions are irreversible.</div>
+  <div style="display:flex;gap:10px;flex-wrap:wrap;">
+    <button class="btn-sm btn-red" onclick="if(confirm('Reset ALL orders?')){DB.saveOrders([]);toast('Orders cleared','info');}">🗑️ Clear All Orders</button>
+    <button class="btn-sm btn-yellow" onclick="if(confirm('Reset ALL deposits?')){DB.saveDeposits([]);toast('Deposits cleared','info');}">🗑️ Clear All Deposits</button>
+  </div>
+</div>`;
+}
+function saveSettings(){
+  const s={
+    siteName:document.getElementById('ss_name').value,
+    currency:document.getElementById('ss_curr').value,
+    currSymbol:document.getElementById('ss_sym').value,
+    minDeposit:parseFloat(document.getElementById('ss_mind').value)||50,
+    maxDeposit:parseFloat(document.getElementById('ss_maxd').value)||100000,
+    announcementText:document.getElementById('ss_ann').value,
+    upiId:document.getElementById('ss_upi').value,
+    bankName:document.getElementById('ss_bname').value,
+    bankAcc:document.getElementById('ss_bacc').value,
+    bankIFSC:document.getElementById('ss_ifsc').value,
+    bankHolder:document.getElementById('ss_holder').value,
+  };
+  DB.saveSettings(s);toast('Settings saved! ⚙️✅','success');
+}
+
+// ============================================================
+// BOOT
+// ============================================================
+initData();
+const initHash=window.location.hash.replace('#','')||'home';
+Router.render(initHash);
+</script>
+</body>
+</html>
